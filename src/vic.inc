@@ -1,0 +1,53 @@
+;
+; VIC Registers
+;
+
+SPRITE_0_X      = $D000
+SPRITE_0_Y      = $D001
+SPRITE_1_X      = $D002
+SPRITE_1_Y      = $D003
+SPRITE_2_X      = $D004
+SPRITE_2_Y      = $D005
+SPRITE_3_X      = $D006
+SPRITE_3_Y      = $D007
+SPRITE_4_X      = $D008
+SPRITE_4_Y      = $D009
+SPRITE_5_X      = $D00A
+SPRITE_5_Y      = $D00B
+SPRITE_6_X      = $D00C
+SPRITE_6_Y      = $D00D
+SPRITE_7_X      = $D00E
+SPRITE_7_Y      = $D00F
+SPRITE_X_HB     = $D010
+VIC_CTL1        = $D011
+VIC_RASTER      = $D012
+VIC_LP_X        = $D013
+VIC_LP_Y        = $D014
+SPRITE_SHOW     = $D015
+VIC_CTL2        = $D016
+SPRITE_DBL_Y    = $D017
+VIC_MEMCTL      = $D018
+VIC_IRR         = $D019
+VIC_IRM         = $D01A
+SPRITE_LAYER    = $D01B
+SPRITE_MULTI    = $D01C
+SPRITE_DBL_X    = $D01D
+SPRITE_COLL_S   = $D01E
+SPRITE_COLL_B   = $D01F
+BORDER_COLOR    = $D020
+BG_COLOR_0      = $D021
+BG_COLOR_1      = $D022
+BG_COLOR_2      = $D023
+BG_COLOR_3      = $D024
+SPRITE_MCOL_1   = $D025
+SPRITE_MCOL_2   = $D026
+SPRITE_0_COL    = $D027
+SPRITE_1_COL    = $D028
+SPRITE_2_COL    = $D029
+SPRITE_3_COL    = $D02A
+SPRITE_4_COL    = $D02B
+SPRITE_5_COL    = $D02C
+SPRITE_6_COL    = $D02D
+SPRITE_7_COL    = $D02E
+
+; vim: ft=asm:et:si:ts=8:sts=8:sw=8

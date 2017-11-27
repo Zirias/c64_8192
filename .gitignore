@@ -1,0 +1,9 @@
+obj/
+.*.swp
+*~
+*.lbl
+*.map
+*.prg
+*.prg_*
+*.d64
+
