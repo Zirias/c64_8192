@@ -145,7 +145,54 @@ rownocarry:	dec	tilerow
 		cpx	#$4
 		bne	boardloop
 
+		lda	#<(vic_colram + $51)
+		sta	drawptr
+		lda	#>(vic_colram + $51)
+		sta	drawptr+1
+		lda	#$0
+		sta	boardrow
+
+captloop:	lda	#$4
+		sta	boardcol
+		ldy	#$0
+
+		lda	boardrow
+		asl	a
+		asl	a
+		sta	boardindex
+		tax
+
+captrowloop:	lda	#$4
+		sta	tilecol
+		lda	board,x
+		asl	a
+		asl	a
+		tax
+
+captoutloop:	lda	tilestrings,x
+		sta	(drawptr),y
+		iny
+		inx
+		dec	tilecol
+		bne	captoutloop
+		iny
+		iny
+		inc	boardindex
+		ldx	boardindex
+		dec	boardcol
+		bne	captrowloop
+		inc	boardrow
+		ldx	boardrow
+		cpx	#$4
+		bne	captnext
 		rts
+captnext:	lda	drawptr
+		clc
+		adc	#$c8
+		sta	drawptr
+		bcc	captloop
+		inc	drawptr+1
+		bcs	captloop
 
 .data
 

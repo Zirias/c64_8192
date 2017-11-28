@@ -9,9 +9,9 @@
 		sei
 		jsr	zp_init
 		jsr	charset_init
-		jsr	irq_init
-		jsr	screen_init
 		jsr	board_init
+		jsr	screen_init
+		jsr	irq_init
 		cli
 end:		jmp	end
 
