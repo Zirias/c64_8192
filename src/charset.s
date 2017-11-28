@@ -32,6 +32,17 @@ corners_loop:	lda	corners-1,x
 		dex
 		bne	corners_loop
 
+		ldx	#$08
+		lda	#$7f
+ledge_loop:	sta	vic_charset + ($e5 << 3) -1,x
+		dex
+		bne	ledge_loop
+		ldx	#$08
+		lda	#$fe
+redge_loop:	sta	vic_charset + ($e7 << 3) -1,x
+		dex
+		bne	redge_loop
+
 		lda	#$37
 		sta	$1
 		rts

@@ -27,7 +27,7 @@ vic_bankselect_and = $fc + (~(vic_bank >> 6) & $3)
 vic_memctl_hires = (vic_colpage << 2) + 9
 
 ; MEM_CTL value for text mode
-vic_memctl_text = (vic_colpage << 2) + (vic_charpage >> 4) + 1
+vic_memctl_text = (vic_colpage << 2) & $f0 + (vic_charpage >> 2) & $0e + 1
 
 ; start address of character set in 6510 AS
 vic_charset = (vic_bank + vic_charpage) << 8

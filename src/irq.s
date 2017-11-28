@@ -8,6 +8,7 @@
 .zeropage
 
 memctl_save:	.res	1
+accu_save:	.res	1
 
 .code
 
@@ -71,5 +72,9 @@ irq_done:
 		rts
 
 isr:
+		sta	accu_save
+		lda	#$ff
+		sta	VIC_IRR
+		lda	accu_save
 isrend:		rti
 
