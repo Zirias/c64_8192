@@ -197,19 +197,19 @@ captnext:	lda	drawptr
 .data
 
 row0:		.byte	$5b, $e3, $e3, $e3, $e3, $5c
-row1:		.byte	$e5, $e0, $e0, $e0, $e0, $e7
+row1:		.byte	$e5, $a0, $a0, $a0, $a0, $e7
 row2:		.byte	$5e, $e4, $e4, $e4, $e4, $5d
 
 tilestrings:	revchr	"    "
-		revchr	"  2 "
-		revchr	"  4 "
-		revchr	"  8 "
+		.byte	$a0, $f1, $f2, $a0
+		.byte	$a0, $f3, $f4, $a0
+		.byte	$a0, $f5, $f6, $a0
 		revchr	" 16 "
 		revchr	" 32 "
 		revchr	" 64 "
-		revchr	" 128"
-		revchr	" 256"
-		revchr	" 512"
+		.byte	$f7, $f8, $f9, $f6
+		.byte	$f1, $fa, $fb, $fc
+		.byte	$fd, $fe, $f8, $f2
 		revchr	"1024"
 		revchr	"2048"
 		revchr	"4096"
