@@ -2,9 +2,19 @@
 .include "vic.inc"
 .include "zp.inc"
 .include "board.inc"
+.include "charconv.inc"
 
 .export screen_init
 .export screen_draw
+
+.zeropage
+
+drawptr:	.res	2
+boardrow:	.res	1
+tilerow:	.res	1
+boardcol:	.res	1
+boardindex:	.res	1
+tilecol:	.res	1
 
 .code
 
@@ -87,6 +97,54 @@ row2_nocarry:	dec	TMPB0
 		rts
 		
 screen_draw:
+		lda	#$0
+		sta	boardrow
+
+		lda	#$0
+		sta	drawptr
+		lda	#$d8
+		sta	drawptr+1
+
+boardloop:	lda	#$5
+		sta	tilerow
+
+bdrowloop:	lda	#$4
+		sta	boardcol
+		ldy	#$0
+
+		lda	boardrow
+		asl	a
+		asl	a
+		sta	boardindex
+		tax
+
+scrowloop:	lda	#$6
+		sta	tilecol
+		lda	board,x
+		tax
+		lda	tilecolors,x
+tlrowloop:	sta	(drawptr),y
+		iny
+		dec	tilecol
+		bne	tlrowloop
+		dec	boardcol
+		beq	scrowdone
+		inc	boardindex
+		ldx	boardindex
+		bne	scrowloop
+scrowdone:	lda	drawptr
+		clc
+		adc	#$28
+		sta	drawptr
+		bcc	rownocarry
+		inc	drawptr+1
+rownocarry:	dec	tilerow
+		bne	bdrowloop
+		inc	boardrow
+		ldx	boardrow
+		cpx	#$4
+		bne	boardloop
+
 		rts
 
 .data
@@ -94,4 +152,21 @@ screen_draw:
 row0:		.byte	$5b, $e3, $e3, $e3, $e3, $5c
 row1:		.byte	$e5, $e0, $e0, $e0, $e0, $e7
 row2:		.byte	$5e, $e4, $e4, $e4, $e4, $5d
+
+tilestrings:	revchr	"    "
+		revchr	"  2 "
+		revchr	"  4 "
+		revchr	"  8 "
+		revchr	" 16 "
+		revchr	" 32 "
+		revchr	" 64 "
+		revchr	" 128"
+		revchr	" 256"
+		revchr	" 512"
+		revchr	"1024"
+		revchr	"2048"
+		revchr	"4096"
+		revchr	"8192"
+
+tilecolors:	.byte	$b, $f, $c, $9, $8, $2, $a, $4, $7, $3, $6, $e, $5, $d
 

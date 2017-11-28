@@ -8,11 +8,14 @@ board:		.res	$10
 .code
 
 board_init:
-		lda	#$0
-		ldx	#$10
-clearloop:	sta	board,x
-		dex
+		ldy	#$0
+		ldx	#$f
+clearloop:	sty	board,x
+		iny
+		cpy	#$0e
+		bne	next
+		ldy	#$0
+next:		dex
 		bpl	clearloop
 		rts
-
 

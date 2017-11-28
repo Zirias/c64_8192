@@ -1,6 +1,7 @@
 .include "vic.inc"
 .include "vicconfig.inc"
 .include "cia.inc"
+.include "screen.inc"
 
 .export irq_init
 .export irq_done
@@ -9,6 +10,8 @@
 
 memctl_save:	.res	1
 accu_save:	.res	1
+x_save:		.res	1
+y_save:		.res	1
 
 .code
 
@@ -73,8 +76,13 @@ irq_done:
 
 isr:
 		sta	accu_save
+		stx	x_save
+		sty	y_save
 		lda	#$ff
 		sta	VIC_IRR
+		jsr	screen_draw
+		ldy	y_save
+		ldx	x_save
 		lda	accu_save
 isrend:		rti
 
