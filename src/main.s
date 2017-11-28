@@ -2,6 +2,7 @@
 .include "irq.inc"
 .include "charset.inc"
 .include "random.inc"
+.include "jsinput.inc"
 .include "screen.inc"
 .include "board.inc"
 
@@ -13,8 +14,14 @@
 		jsr	charset_init
 		jsr	board_init
 		jsr	screen_init
+		jsr	js_init
 		jsr	irq_init
-		jsr	screen_draw
 		cli
-end:		jmp	end
+
+		jsr	screen_draw
+
+end:		jsr	js_get
+		bcs	end
+		inc	$d020
+		bcc	end
 

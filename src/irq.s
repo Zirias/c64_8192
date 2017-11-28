@@ -1,6 +1,7 @@
 .include "vic.inc"
 .include "vicconfig.inc"
 .include "cia.inc"
+.include "jsinput.inc"
 .include "screen.inc"
 
 .export irq_init
@@ -16,8 +17,6 @@ y_save:		.res	1
 .code
 
 irq_init:
-		sei
-
 		; disable NMI
 		lda	#<isrend
 		sta	$0318
@@ -66,12 +65,9 @@ irq_init:
 		sta	VIC_IRM
 		sta	VIC_IRR
 
-		cli
 		rts
 
 irq_done:
-		sei
-		cli
 		rts
 
 isr:
@@ -81,6 +77,7 @@ isr:
 		lda	#$ff
 		sta	VIC_IRR
 		jsr	screen_refresh
+		jsr	js_check
 		ldy	y_save
 		ldx	x_save
 		lda	accu_save
