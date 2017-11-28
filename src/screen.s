@@ -6,6 +6,7 @@
 
 .export screen_init
 .export screen_draw
+.export screen_refresh
 
 .zeropage
 
@@ -15,6 +16,7 @@ tilerow:	.res	1
 boardcol:	.res	1
 boardindex:	.res	1
 tilecol:	.res	1
+drawreq:	.res	1
 
 .code
 
@@ -22,7 +24,9 @@ screen_init:
 		lda	#>vic_colram
 		sta	TMPW0+1		
 		lda	#$20
-		ldy	#$0
+		ldy	#$1
+		sty	drawreq
+		dey
 		sty	TMPW0
 		sty	BORDER_COLOR
 		sty	BG_COLOR_0
@@ -97,10 +101,15 @@ row2_nocarry:	dec	TMPB0
 		rts
 		
 screen_draw:
-		lda	#$0
+		dec	drawreq
+sd_wait:	lda	drawreq
+		beq	sd_wait
+sc_nodraw:	rts
+		
+screen_refresh:
+		lda	drawreq
+		bne	sc_nodraw
 		sta	boardrow
-
-		lda	#$0
 		sta	drawptr
 		lda	#$d8
 		sta	drawptr+1
@@ -185,6 +194,7 @@ captoutloop:	lda	tilestrings,x
 		ldx	boardrow
 		cpx	#$4
 		bne	captnext
+		inc	drawreq
 		rts
 captnext:	lda	drawptr
 		clc

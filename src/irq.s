@@ -80,7 +80,7 @@ isr:
 		sty	y_save
 		lda	#$ff
 		sta	VIC_IRR
-		jsr	screen_draw
+		jsr	screen_refresh
 		ldy	y_save
 		ldx	x_save
 		lda	accu_save

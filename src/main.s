@@ -14,6 +14,7 @@
 		jsr	board_init
 		jsr	screen_init
 		jsr	irq_init
+		jsr	screen_draw
 		cli
 end:		jmp	end
 
