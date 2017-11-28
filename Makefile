@@ -6,8 +6,8 @@ MKD64?=mkd64
 C64ASFLAGS?=-t $(C64SYS) -g
 C64LDFLAGS?=-Ln 8192.lbl -m 8192.map -Csrc/8192.cfg
 
-8192_OBJS:=$(addprefix obj/,autoboot.o zp.o charset.o irq.o screen.o \
-	board.o main.o)
+8192_OBJS:=$(addprefix obj/,autoboot.o zp.o charset.o irq.o random.o \
+	screen.o board.o main.o)
 8192_BIN:=8192.prg
 8192_DISK:=8192.d64
 

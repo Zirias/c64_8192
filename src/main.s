@@ -1,6 +1,7 @@
 .include "zp.inc"
 .include "irq.inc"
 .include "charset.inc"
+.include "random.inc"
 .include "screen.inc"
 .include "board.inc"
 
@@ -8,6 +9,7 @@
 
 		sei
 		jsr	zp_init
+		jsr	rnd_init
 		jsr	charset_init
 		jsr	board_init
 		jsr	screen_init
