@@ -99,7 +99,7 @@ board_right:
 board_setdir:	sta	direction
 		lda	#$1
 		sta	moving
-		lda	#$0
+		lda	#$3
 		ldx	#$3
 initcombined:	sta	combined,x
 		dex
@@ -184,9 +184,13 @@ bs_steploop:	jsr	getidx
 		bne	bs_stepnext
 bs_checkcomb:	ldx	moverow
 		ldy	combined,x
-		bne	bs_stepnext
+		cpy	movestep
+		bcc	bs_stepnext
+		beq	bs_stepnext
 		cmp	tmppos
 		bne	bs_stepnext
+		cmp	#$d
+		beq	bs_stepnext
 		lda	#$0
 		ldx	fromidx
 		sta	board,x
@@ -215,7 +219,8 @@ bs_rolloop:	asl	scoreadd
 		adc	#$0
 		sta	score+3
 		ldx	moverow
-		inc	combined,x
+		lda	movestep
+		sta	combined,x
 bs_stepnext:	dec	movestep
 		bpl	bs_steploop
 		dec	moverow
