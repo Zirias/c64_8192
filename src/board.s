@@ -64,7 +64,11 @@ ba_scannext:	lda	board,x
 		bpl	ba_scan2
 		stx	tmppos
 		jsr	rnd
-		and	#$c
+		tax
+		and	#$f
+		beq	ba_add4
+		txa
+		and	#$f1
 		beq	ba_add4
 		lda	#$1
 		bne	ba_done

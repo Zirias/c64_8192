@@ -56,10 +56,10 @@ irq_init:
 		sta	$1
 
 		; configure VIC IRQ
-		lda	#$00
+		lda	#$20
 		sta	VIC_RASTER
 		lda	VIC_CTL1
-		and	#$7f
+		ora	#$80
 		sta	VIC_CTL1
 		lda	#$01
 		sta	VIC_IRM
