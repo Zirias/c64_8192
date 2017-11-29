@@ -5,6 +5,8 @@
 .include "jsinput.inc"
 .include "screen.inc"
 .include "board.inc"
+.include "numconv.inc"
+.include "vicconfig.inc"
 
 .zeropage
 
@@ -53,6 +55,17 @@ steploop:	jsr	board_step
 		bcs	stepdone
 		lda	#$1
 		sta	validmove
+		ldx	#$3
+copyscore:	lda	score,x
+		sta	nc_num,x
+		dex
+		bpl	copyscore
+		jsr	numtostring
+		ldx	#NUMSTRSIZE
+copyscorestr:	lda	nc_string-1,x
+		sta	vic_colram+$43,x
+		dex
+		bne	copyscorestr
 		jsr	screen_draw
 		bne	steploop
 stepdone:	lda	validmove

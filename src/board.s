@@ -1,6 +1,7 @@
 .include "random.inc"
 
 .exportzp board
+.exportzp score
 .export board_init
 .export board_addpiece
 .export board_up
@@ -17,6 +18,8 @@ DIR_RIGHT	= 4
 .zeropage
 
 board:		.res	$10
+score:		.res	4
+scoreadd:	.res	2
 tmppos:		.res	1
 direction:	.res	1
 moving:		.res	1
@@ -32,7 +35,7 @@ toidx:		.res	1
 board_init:
 		lda	#$0
 		sta	moving
-		ldx	#$f
+		ldx	#$13		; board + score
 clearloop:	sta	board,x
 		dex
 		bpl	clearloop
@@ -190,6 +193,27 @@ bs_checkcomb:	ldx	moverow
 		ldx	toidx
 		inc	board,x
 		inc	stepdone
+		ldy	#$1
+		sty	scoreadd
+		dey
+		sty	scoreadd+1
+		ldy	board,x
+bs_rolloop:	asl	scoreadd
+		rol	scoreadd+1
+		dey
+		bne	bs_rolloop
+		lda	score
+		adc	scoreadd
+		sta	score
+		lda	score+1
+		adc	scoreadd+1
+		sta	score+1
+		lda	score+2
+		adc	#$0
+		sta	score+2
+		lda	score+3
+		adc	#$0
+		sta	score+3
 		ldx	moverow
 		inc	combined,x
 bs_stepnext:	dec	movestep

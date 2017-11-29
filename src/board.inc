@@ -1,4 +1,5 @@
 .importzp board
+.importzp score
 .import board_init
 .import board_addpiece
 .import board_up
