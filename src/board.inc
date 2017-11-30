@@ -7,5 +7,6 @@
 .import board_left
 .import board_right
 .import board_step
+.import board_canmove
 
 ; vim: ft=asm:et:si:ts=8:sts=8:sw=8

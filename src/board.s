@@ -9,6 +9,7 @@
 .export board_left
 .export board_right
 .export board_step
+.export board_canmove
 
 DIR_UP		= 1
 DIR_DOWN	= 2
@@ -42,19 +43,7 @@ clearloop:	sta	board,x
 		jsr	board_addpiece
 
 board_addpiece:
-		ldx	#$10
-		ldy	#$0
-ba_scan:	dex
-		bmi	ba_scandone
-		lda	board,x
-		bne	ba_scan
-		iny
-		bne	ba_scan
-ba_scandone:	cpy	#$0
-		bne	ba_doadd
-		sec
-		rts
-ba_doadd:	jsr	rnd
+		jsr	rnd
 		and	#$1f
 		tay
 		ldx	#$10
@@ -78,7 +67,6 @@ ba_scannext:	lda	board,x
 ba_add4:	lda	#$2
 ba_done:	ldx	tmppos
 		sta	board,x
-		clc
 		rts
 
 board_up:
@@ -228,3 +216,30 @@ bs_stepnext:	dec	movestep
 		lda	#$0
 		cmp	stepdone
 		rts
+
+board_canmove:
+		ldx	#$f
+		sec
+bcm_empty:	lda	board,x
+		bne	bcm_notempty
+bcm_out:	rts
+bcm_notempty:	dex
+		bpl	bcm_empty
+		ldx	#$e
+bcm_adjacent:	txa
+		and	#$3
+		eor	#$3
+		beq	bcm_skipcols
+		lda	board,x
+		cmp	board+1,x
+		beq	bcm_out
+bcm_skipcols:	cpx	#$c
+		bcs	bcm_skiprows
+		lda	board,x
+		cmp	board+4,x
+		beq	bcm_out
+bcm_skiprows:	dex
+		bpl	bcm_adjacent
+		clc
+		rts
+

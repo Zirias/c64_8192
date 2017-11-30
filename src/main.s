@@ -7,6 +7,7 @@
 .include "board.inc"
 .include "numconv.inc"
 .include "vicconfig.inc"
+.include "charconv.inc"
 
 .zeropage
 
@@ -71,10 +72,19 @@ copyscorestr:	lda	nc_string-1,x
 stepdone:	lda	validmove
 		beq	check_js
 		jsr	board_addpiece
-		bcc	add_done
+		jsr	screen_draw
+		jsr	board_canmove
+		bcs	check_js
 
-gameover:	bcs	gameover
+		ldx	#gameoverlen
+gotextloop:	lda	gameovertext-1,x
+		sta	vic_colram+$93,x
+		dex
+		bne	gotextloop
+end:		beq	end
 
-add_done:	jsr	screen_draw
-		bne	check_js
 
+.data
+
+gameovertext:	plainchr "Game over!"
+gameoverlen	= *-gameovertext
