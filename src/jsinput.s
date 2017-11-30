@@ -9,6 +9,8 @@
 
 js_buf:		.res	$10
 js_latest:	.res	1
+js_debounce:	.res	1
+js_next:	.res	1
 js_front:	.res	1
 js_back:	.res	1
 js_repeat:	.res	1
@@ -20,6 +22,8 @@ js_init:
 		lda	#$0
 		sta	js_front
 		sta	js_back
+		sta	js_debounce
+		sta	js_next
 		sta	js_repeat
 		rts
 
@@ -27,6 +31,17 @@ js_check:
 		lda	CIA1_PRA
 		and	#$1f
 		eor	#$1f
+		tay
+		and	js_debounce
+		eor	js_debounce
+		beq	jc_nobounce
+		cpy	js_next
+		beq	jc_nobounce
+		sty	js_next
+		rts
+jc_nobounce:	tya
+		sta	js_debounce
+		sta	js_next
 		beq	jc_done
 		cmp	js_latest
 		beq	jc_done
@@ -36,7 +51,7 @@ js_check:
 		ldx	#$f
 jc_store:	stx	js_front
 		sta	js_buf,x
-jc_done:	sta	js_latest
+jc_done:	sty	js_latest
 		rts
 
 js_get:
