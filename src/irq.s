@@ -76,9 +76,23 @@ isr:
 		sty	y_save
 		lda	#$ff
 		sta	VIC_IRR
+
+		lda	VIC_CTL1
+		eor	#$80
+		sta	VIC_CTL1
+		bmi	isr_upper
+
+		lda	#$64
+		sta	VIC_RASTER
 		jsr	screen_refresh
 		jsr	js_check
-		ldy	y_save
+		jmp	isr_bottom
+
+isr_upper:	lda	#$0
+		sta	VIC_RASTER
+		jsr	js_check
+
+isr_bottom:	ldy	y_save
 		ldx	x_save
 		lda	accu_save
 isrend:		rti
