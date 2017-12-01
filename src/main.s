@@ -5,7 +5,6 @@
 .include "jsinput.inc"
 .include "screen.inc"
 .include "board.inc"
-.include "numconv.inc"
 .include "vicconfig.inc"
 .include "charconv.inc"
 
@@ -25,6 +24,7 @@ validmove:	.res	1
 		jsr	irq_init
 		cli
 
+		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
 		jsr	screen_draw
 
 check_js:	jsr	js_get
@@ -37,22 +37,13 @@ steploop:	jsr	board_step
 		bcs	stepdone
 		lda	#$1
 		sta	validmove
-		ldx	#$3
-copyscore:	lda	score,x
-		sta	nc_num,x
-		dex
-		bpl	copyscore
-		jsr	numtostring
-		ldx	#NUMSTRSIZE
-copyscorestr:	lda	nc_string-1,x
-		sta	vic_colram+$43,x
-		dex
-		bne	copyscorestr
+		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
 		jsr	screen_draw
-		bne	steploop
+		beq	steploop
 stepdone:	lda	validmove
 		beq	check_js
 		jsr	board_addpiece
+		lda	#DRAWREQ_BOARD
 		jsr	screen_draw
 		jsr	board_canmove
 		bcs	check_js

@@ -1,3 +1,5 @@
+.include "drawreq.inc"
+
 .import screen_init
 .import screen_draw
 .import screen_refresh

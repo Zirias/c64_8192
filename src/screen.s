@@ -3,6 +3,8 @@
 .include "zp.inc"
 .include "board.inc"
 .include "charconv.inc"
+.include "numconv.inc"
+.include "drawreq.inc"
 
 .export screen_init
 .export screen_draw
@@ -98,17 +100,87 @@ row2_done:	lda	TMPW0
 row2_nocarry:	dec	TMPB0
 		bne	row0_repeat
 		
+		lda	#$a0
+		ldx	#$4e
+lowerboxloop1:	sta	vic_colram+$370,x
+		dex
+		bne	lowerboxloop1
+		lda	#$e3
+		ldx	#$26
+lowerboxloop2:	sta	vic_colram+$348,x
+		eor	#$7
+		sta	vic_colram+$3c0,x
+		eor	#$7
+		dex
+		bne	lowerboxloop2
+		lda	#$e5
+		sta	vic_colram+$370
+		sta	vic_colram+$398
+		lda	#$e7
+		sta	vic_colram+$397
+		sta	vic_colram+$3bf
+		ldy	#$5b
+		sty	vic_colram+$348
+		iny
+		sty	vic_colram+$36f
+		iny
+		sty	vic_colram+$3e7
+		iny
+		sty	vic_colram+$3c0
+
+		ldx	#scorestrlen
+scorelbl:	lda	scorestr-1,x
+		sta	vic_colram+$374,x
+		dex
+		bne	scorelbl
+
+		ldx	#highscorestrlen
+highscorelbl:	lda	highscorestr-1,x
+		sta	vic_colram+$387,x
+		dex
+		bne	highscorelbl
+
+		ldx	#$a0
+		lda	#$d
+lowerboxcol:	sta	$d800+$347,x
+		dex
+		bne	lowerboxcol
+
 		rts
 		
 screen_draw:
-		dec	drawreq
+		sta	drawreq
 sd_wait:	lda	drawreq
-		beq	sd_wait
+		bne	sd_wait
 sc_nodraw:	rts
 		
 screen_refresh:
 		lda	drawreq
-		bne	sc_nodraw
+		and	#DRAWREQ_BOARD
+		beq	sr_score
+		jsr	sr_doboard
+sr_score:	lda	drawreq
+		and	#DRAWREQ_SCORE
+		beq	sr_done
+
+		ldx	#$3
+copyscore:	lda	score,x
+		sta	nc_num,x
+		dex
+		bpl	copyscore
+		jsr	numtostring
+		ldx	#NUMSTRSIZE
+copyscorestr:	lda	nc_string-1,x
+		ora	#$80
+		sta	vic_colram+$39c,x
+		dex
+		bne	copyscorestr
+	
+sr_done:	lda	#$0
+		sta	drawreq
+		rts
+
+sr_doboard:	lda	#$0
 		sta	boardrow
 		sta	drawptr
 		lda	#$d8
@@ -194,7 +266,6 @@ captoutloop:	lda	tilestrings,x
 		ldx	boardrow
 		cpx	#$4
 		bne	captnext
-		inc	drawreq
 		rts
 captnext:	lda	drawptr
 		clc
@@ -227,3 +298,7 @@ tilestrings:	revchr	"    "
 
 tilecolors:	.byte	$b, $f, $c, $9, $8, $2, $a, $4, $7, $3, $6, $e, $5, $d
 
+scorestr:	revchr "Score:"
+scorestrlen	= *-scorestr
+highscorestr:	revchr "High score:"
+highscorestrlen	= *-highscorestr
