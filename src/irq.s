@@ -56,10 +56,10 @@ irq_init:
 		sta	$1
 
 		; configure VIC IRQ
-		lda	#$20
+		lda	#$fb
 		sta	VIC_RASTER
 		lda	VIC_CTL1
-		ora	#$80
+		and	#$7f
 		sta	VIC_CTL1
 		lda	#$01
 		sta	VIC_IRM
@@ -77,18 +77,16 @@ isr:
 		lda	#$ff
 		sta	VIC_IRR
 
-		lda	VIC_CTL1
-		eor	#$80
-		sta	VIC_CTL1
-		bmi	isr_upper
+		lda	VIC_RASTER
+		bpl	isr_upper
 
-		lda	#$64
+		lda	#$5f
 		sta	VIC_RASTER
 		jsr	screen_refresh
 		jsr	js_check
 		jmp	isr_bottom
 
-isr_upper:	lda	#$0
+isr_upper:	lda	#$fb
 		sta	VIC_RASTER
 		jsr	js_check
 
