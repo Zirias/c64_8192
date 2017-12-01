@@ -29,28 +29,9 @@ validmove:	.res	1
 
 check_js:	jsr	js_get
 		bcs	check_js
-		lsr	a
-		bcs	move_up
-		lsr	a
-		bcs	move_down
-		lsr	a
-		bcs	move_left
-		lsr	a
-		bcs	move_right
-		bcc	check_js
-
-move_up:	jsr	board_up
-		bne	dosteps
-
-move_down:	jsr	board_down
-		bne	dosteps
-
-move_left:	jsr	board_left
-		bne	dosteps
-
-move_right:	jsr	board_right
-
-dosteps:	lda	#$0
+		jsr	board_setdir
+		bcs	check_js
+		lda	#$0
 		sta	validmove
 steploop:	jsr	board_step
 		bcs	stepdone

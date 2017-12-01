@@ -2,10 +2,7 @@
 .importzp score
 .import board_init
 .import board_addpiece
-.import board_up
-.import board_down
-.import board_left
-.import board_right
+.import board_setdir
 .import board_step
 .import board_canmove
 

@@ -1,20 +1,13 @@
 .include "random.inc"
+.include "jscodes.inc"
 
 .exportzp board
 .exportzp score
 .export board_init
 .export board_addpiece
-.export board_up
-.export board_down
-.export board_left
-.export board_right
+.export board_setdir
 .export board_step
 .export board_canmove
-
-DIR_UP		= 1
-DIR_DOWN	= 2
-DIR_LEFT	= 3
-DIR_RIGHT	= 4
 
 .zeropage
 
@@ -69,22 +62,9 @@ ba_done:	ldx	tmppos
 		sta	board,x
 		rts
 
-board_up:
-		lda	#DIR_UP
-		bne	board_setdir
-
-board_down:
-		lda	#DIR_DOWN
-		bne	board_setdir
-
-board_left:
-		lda	#DIR_LEFT
-		bne	board_setdir
-
-board_right:
-		lda	#DIR_RIGHT
-		
-board_setdir:	sta	direction
+board_setdir:	cmp	#JS_FIRE
+		bcs	bs_done
+		sta	direction
 		lda	#$1
 		sta	moving
 		lda	#$3
@@ -92,16 +72,16 @@ board_setdir:	sta	direction
 initcombined:	sta	combined,x
 		dex
 		bpl	initcombined
-		rts
+bs_done:	rts
 
 
 getidx:
 		lda	direction
-		cmp	#DIR_RIGHT
+		cmp	#JS_RIGHT
 		beq	getidx_right
-		cmp	#DIR_LEFT
+		cmp	#JS_LEFT
 		beq	getidx_left
-		cmp	#DIR_DOWN
+		cmp	#JS_DOWN
 		beq	getidx_down
 
 getidx_up:	

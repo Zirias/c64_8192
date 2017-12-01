@@ -1,4 +1,5 @@
 .include "cia.inc"
+.include "jscodes.inc"
 
 .export js_init
 .export js_check
@@ -11,6 +12,7 @@ js_buf:		.res	$10
 js_latest:	.res	1
 js_debounce:	.res	1
 js_next:	.res	1
+js_decode:	.res	1
 js_front:	.res	1
 js_back:	.res	1
 js_repeat:	.res	1
@@ -45,13 +47,41 @@ jc_nobounce:	tya
 		beq	jc_done
 		cmp	js_latest
 		beq	jc_done
-		ldx	js_front
+		and	js_latest
+		eor	js_latest
+		bne	jc_done
+		tya
+		eor	js_latest
+		sta	js_decode
+		lsr	js_decode
+		bcc	jc_skipup
+		lda	#JS_UP
+		jsr	jc_enqueue
+jc_skipup:	lsr	js_decode
+		bcc	jc_skipdown
+		lda	#JS_DOWN
+		jsr	jc_enqueue
+jc_skipdown:	lsr	js_decode
+		bcc	jc_skipleft
+		lda	#JS_LEFT
+		jsr	jc_enqueue
+jc_skipleft:	lsr	js_decode
+		bcc	jc_skipright
+		lda	#JS_RIGHT
+		jsr	jc_enqueue
+jc_skipright:	lsr	js_decode
+		bcc	jc_done
+		lda	#JS_FIRE
+		jsr	jc_enqueue
+jc_done:	sty	js_latest
+		rts
+
+jc_enqueue:	ldx	js_front
 		dex
 		bpl	jc_store
 		ldx	#$f
 jc_store:	stx	js_front
 		sta	js_buf,x
-jc_done:	sty	js_latest
 		rts
 
 js_get:
