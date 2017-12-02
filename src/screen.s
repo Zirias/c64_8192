@@ -173,17 +173,80 @@ screen_refresh:
 		and	#DRAWREQ_BOARD
 		beq	sr_score
 		jsr	sr_doboard
+
 sr_score:	lda	drawreq
 		and	#DRAWREQ_SCORE
-		beq	sr_done
-
+		beq	sr_appear
 		ldx	#NUMSTRSIZE
 copyscorestr:	lda	nc_string-1,x
 		ora	#$80
 		sta	vic_colram+$39c,x
 		dex
 		bne	copyscorestr
-	
+
+sr_appear:	lda	drawreq
+		and	#DRAWREQ_APPEAR
+		beq	sr_done
+		lda	appearat
+		lsr	a
+		lsr	a
+		tay
+		jsr	sr_rowpointers
+		lda	appearat
+		and	#$3
+		tay
+		lda	#$0
+		clc	
+sr_coladd:	dey
+		bmi	sr_appearcol
+		adc	#$6
+		bcc	sr_coladd
+sr_appearcol:	sta	screencol
+		ldy	screencol
+		lda	#$0
+		ldx	#$6
+sr_cleartile:	sta	(drawptr0),y
+		sta	(drawptr1),y
+		sta	(drawptr2),y
+		sta	(drawptr3),y
+		sta	(drawptr4),y
+		iny
+		dex
+		bne	sr_cleartile
+		ldy	appear
+		lda	tilecolors,y
+		ldx	#$4
+		ldy	screencol
+		iny
+sr_fillcenter:	sta	(drawptr1),y
+		sta	(drawptr2),y
+		sta	(drawptr3),y
+		iny
+		dex
+		bne	sr_fillcenter
+		lda	appearat
+		lsr	a
+		lsr	a
+		tay
+		lda	screenrowl2,y
+		sta	drawptr0
+		lda	captrow,y
+		sta	drawptr0+1
+		lda	appear
+		asl	a
+		asl	a
+		tax
+		lda	#$4
+		sta	tilecol
+		ldy	screencol
+		iny
+sr_appcap:	lda	tilestrings,x
+		sta	(drawptr0),y
+		iny
+		inx
+		dec	tilecol
+		bne	sr_appcap
+			
 sr_done:	lda	#$0
 		sta	drawreq
 		rts
@@ -193,24 +256,7 @@ sr_doboard:
 		lda	#$3
 		sta	boardrow
 sr_boardloop:	ldy	boardrow
-		lda	screenrowl0,y
-		sta	drawptr0
-		lda	screenrowl1,y
-		sta	drawptr1
-		lda	screenrowl2,y
-		sta	drawptr2
-		lda	screenrowl3,y
-		sta	drawptr3
-		lda	screenrowl4,y
-		sta	drawptr4
-		lda	colrowh0_1,y
-		sta	drawptr0+1
-		sta	drawptr1+1
-		lda	colrowh2,y
-		sta	drawptr2+1
-		lda	colrowh3_4,y
-		sta	drawptr3+1
-		sta	drawptr4+1
+		jsr	sr_rowpointers
 		lda	#$3
 		sta	boardcol
 		ldy	#$17
@@ -266,6 +312,27 @@ captoutloop:	lda	tilestrings,x
 		inc	boardrow
 		cpx	#$10
 		bne	captloop
+		rts
+
+sr_rowpointers:
+		lda	screenrowl0,y
+		sta	drawptr0
+		lda	screenrowl1,y
+		sta	drawptr1
+		lda	screenrowl2,y
+		sta	drawptr2
+		lda	screenrowl3,y
+		sta	drawptr3
+		lda	screenrowl4,y
+		sta	drawptr4
+		lda	colrowh0_1,y
+		sta	drawptr0+1
+		sta	drawptr1+1
+		lda	colrowh2,y
+		sta	drawptr2+1
+		lda	colrowh3_4,y
+		sta	drawptr3+1
+		sta	drawptr4+1
 		rts
 
 .data

@@ -27,6 +27,20 @@ validmove:	.res	1
 		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
 		jsr	screen_draw
 
+		jsr	board_addpiece
+		lda	#DRAWREQ_APPEAR
+		jsr	screen_draw
+		lda	#DRAWREQ_BOARD
+		jsr	screen_draw
+
+mainloop:	jsr	board_addpiece
+		lda	#DRAWREQ_APPEAR
+		jsr	screen_draw
+		lda	#DRAWREQ_BOARD
+		jsr	screen_draw
+		jsr	board_canmove
+		bcc	gameover
+
 check_js:	jsr	js_get
 		bcs	check_js
 		jsr	board_setdir
@@ -42,13 +56,9 @@ steploop:	jsr	board_step
 		beq	steploop
 stepdone:	lda	validmove
 		beq	check_js
-		jsr	board_addpiece
-		lda	#DRAWREQ_BOARD
-		jsr	screen_draw
-		jsr	board_canmove
-		bcs	check_js
+		bne	mainloop
 
-		ldx	#gameoverlen
+gameover:	ldx	#gameoverlen
 gotextloop:	lda	gameovertext-1,x
 		sta	vic_colram+$93,x
 		dex

@@ -3,6 +3,8 @@
 
 .exportzp board
 .exportzp score
+.exportzp appear
+.exportzp appearat
 .export board_init
 .export board_addpiece
 .export board_setdir
@@ -23,6 +25,8 @@ movestep:	.res	1
 stepdone:	.res	1
 fromidx:	.res	1
 toidx:		.res	1
+appear:		.res	1
+appearat:	.res	1
 
 .code
 
@@ -33,7 +37,7 @@ board_init:
 clearloop:	sta	board,x
 		dex
 		bpl	clearloop
-		jsr	board_addpiece
+		rts
 
 board_addpiece:
 		jsr	rnd
@@ -47,7 +51,7 @@ ba_scannext:	lda	board,x
 		bne	ba_scan2
 		dey
 		bpl	ba_scan2
-		stx	tmppos
+		stx	appearat
 		jsr	rnd
 		tax
 		and	#$f
@@ -58,8 +62,9 @@ ba_scannext:	lda	board,x
 		lda	#$1
 		bne	ba_done
 ba_add4:	lda	#$2
-ba_done:	ldx	tmppos
+ba_done:	ldx	appearat
 		sta	board,x
+		sta	appear
 		rts
 
 board_setdir:	cmp	#JS_FIRE

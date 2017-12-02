@@ -1,5 +1,7 @@
 .importzp board
 .importzp score
+.importzp appear
+.importzp appearat
 .import board_init
 .import board_addpiece
 .import board_setdir

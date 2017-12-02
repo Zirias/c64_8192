@@ -7,12 +7,15 @@
 .export irq_init
 .export irq_done
 
+FRAMESKIP	= 1
+
 .zeropage
 
 memctl_save:	.res	1
 accu_save:	.res	1
 x_save:		.res	1
 y_save:		.res	1
+framephase:	.res	1
 
 .code
 
@@ -30,6 +33,9 @@ irq_init:
 		sta	CIA2_ICR
 		lda	#$01
 		sta	CIA2_CRA
+
+		;lda	#FRAMESKIP
+		sta	framephase
 
 		; VIC memory configuration
 		lda	CIA2_PRA
@@ -82,8 +88,12 @@ isr:
 
 		lda	#$5f
 		sta	VIC_RASTER
+		dec	framephase
+		bpl	isr_nodraw
+		lda	#FRAMESKIP
+		sta	framephase
 		jsr	screen_refresh
-		jsr	js_check
+isr_nodraw:	jsr	js_check
 		jmp	isr_bottom
 
 isr_upper:	lda	#$fb
