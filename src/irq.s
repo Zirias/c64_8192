@@ -3,6 +3,7 @@
 .include "cia.inc"
 .include "jsinput.inc"
 .include "screen.inc"
+.include "sound.inc"
 
 .export irq_init
 .export irq_done
@@ -98,6 +99,9 @@ isr_nodraw:	jsr	js_check
 
 isr_upper:	lda	#$fb
 		sta	VIC_RASTER
+		inc	$d020
+		jsr	snd_step
+		dec	$d020
 		jsr	js_check
 
 isr_bottom:	ldy	y_save

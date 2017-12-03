@@ -7,6 +7,7 @@
 .include "board.inc"
 .include "vicconfig.inc"
 .include "charconv.inc"
+.include "sound.inc"
 
 .zeropage
 
@@ -21,8 +22,12 @@ validmove:	.res	1
 		jsr	board_init
 		jsr	screen_init
 		jsr	js_init
+		jsr	snd_init
 		jsr	irq_init
 		cli
+
+		lda	#$0
+		jsr	snd_settune
 
 		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
 		jsr	screen_draw

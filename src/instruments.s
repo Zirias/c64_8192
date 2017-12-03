@@ -1,0 +1,54 @@
+.export	inst_ad
+.export	inst_sr
+.export	inst_wt
+.export	inst_pt
+.export	inst_ft
+.export wave_l
+.export wave_h
+.export pulse_l
+.export pulse_h
+.export filter_l
+.export	filter_h
+
+.data
+
+inst_ad:
+		.byte	$00
+		.byte	$11
+
+inst_sr:
+		.byte	$00
+		.byte	$a9
+
+inst_wt:
+		.byte	$00
+		.byte	w_1 -wave_l+1
+
+inst_pt:
+		.byte	$00
+		.byte	p_1 - pulse_l+1
+
+inst_ft:
+		.byte	$00
+		.byte	f_1 - filter_l+1
+
+wave_l:
+w_1:		.byte	$41,$41,$41,$41,$41,$41,$41,$41
+		.byte	$40,$ff
+
+wave_h:
+		.byte	$00,$00,$00,$00,$00,$00,$00,$00
+		.byte	$00,$00
+
+pulse_l:
+p_1:		.byte	$8a,$ff
+
+pulse_h:
+		.byte	$00,$00
+
+filter_l:
+f_1:		.byte	$90,$00,$20,$ff
+
+filter_h:
+		.byte	$21,$c0,$fa,$00
+
