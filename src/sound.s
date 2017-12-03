@@ -140,6 +140,9 @@ ss_hr_sti0:	sta	inst0
 		lda	#$0
 		sta	SID_AD1
 		sta	SID_SR1
+		sta	wtpos0
+		sta	ptpos0
+		sta	ftpos0
 		lda	SID_CR1
 		and	#$fe
 		sta	SID_CR1
@@ -156,6 +159,9 @@ ss_hr_sti1:	sta	inst1
 		lda	#$0
 		sta	SID_AD2
 		sta	SID_SR2
+		sta	wtpos1
+		sta	ptpos1
+		sta	ftpos1
 		lda	SID_CR2
 		and	#$fe
 		sta	SID_CR2
@@ -172,10 +178,13 @@ ss_hr_sti2:	sta	inst2
 		lda	#$0
 		sta	SID_AD3
 		sta	SID_SR3
+		sta	wtpos2
+		sta	ptpos2
+		sta	ftpos2
 		lda	SID_CR3
 		and	#$fe
 		sta	SID_CR3
-ss_hr_done:	rts
+ss_hr_done:	jmp	ss_tablestep
 
 snd_step:
 		ldx	hrstep
@@ -185,7 +194,7 @@ snd_step:
 		beq	ss_hr_pre
 		cpx	#$02
 		bne	ss_hr_done
-		beq	snd_hr_off
+		jmp	snd_hr_off
 ss_hr_pre:	ldx	inst0
 		beq	ss_hr_pre1
 		lda	inst_ad,x
@@ -212,7 +221,7 @@ ss_hr_pre2:	ldx	inst2
 		sta	SID_CR3
 ss_hr_speed:	lda	#$80
 		sta	stepcount
-		rts
+		bmi	ss_hr_done
 ss_no_hr:	ldx	stepcount
 		bpl	ss_normalstep
 		lda	speed
