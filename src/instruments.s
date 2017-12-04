@@ -14,52 +14,61 @@
 
 inst_ad:
 		.byte	$13
-		.byte	$11
+		.byte	$14
 		.byte	$32
+		.byte	$14
 
 inst_sr:
 		.byte	$ab
-		.byte	$a9
+		.byte	$79
 		.byte	$8c
+		.byte	$79
 
 inst_wt:
 		.byte	w_1 - wave_l+1
 		.byte	w_2 - wave_l+1
 		.byte	w_3 - wave_l+1
+		.byte	w_4 - wave_l+1
 
 inst_pt:
 		.byte	$00
 		.byte	p_2 - pulse_l+1
 		.byte	$00
+		.byte	p_2 - pulse_l+1
 
 inst_ft:
 		.byte	$00
 		.byte	f_1 - filter_l+1
 		.byte	f_2 - filter_l+1
+		.byte	f_1 - filter_l+1
 
 wave_l:
 w_1:		.byte	$11,$ff
-w_2:		.byte	$41,$41,$41,$41,$41,$41,$41,$41
-		.byte	$41,$41,$41,$41,$41,$41,$41,$41
-		.byte	$41,$41,$41,$41,$41,$41,$41,$41
-		.byte	$40,$ff
+w_2:		.byte	$41,$41,$41,$41,$41,$41
+		.byte	$41,$41,$41,$41,$41,$41
+		.byte	$41,$41,$41,$41,$41,$ff
 w_3:		.byte	$21,$21,$21,$21,$21,$21,$21,$21
 		.byte	$20,$ff
+w_4:		.byte	$41,$41,$41,$41,$41,$41
+		.byte	$41,$41,$41,$41,$41,$41
+		.byte	$41,$41,$41,$41,$ff
 
 wave_h:
 		.byte	$00,$00
-		.byte	$f7,$fb,$00,$f7,$fb,$00,$f7,$fb
-		.byte	$00,$f7,$fb,$00,$f7,$fb,$00,$f7
-		.byte	$fb,$00,$f7,$fb,$00,$f7,$fb,$00
-		.byte	$00,$00
+		.byte	$f7,$fb,$00,$f7,$fb,$00
+		.byte	$f7,$fb,$00,$f7,$fb,$00
+		.byte	$f7,$fb,$00,$f7,$fb,$00
 		.byte	$00,$00,$00,$00,$00,$00,$00,$00
 		.byte	$00,$00
+		.byte	$fc,$00,$03,$fc,$00,$03
+		.byte	$fc,$00,$03,$fc,$00,$03
+		.byte	$fc,$00,$03,$fc,$00
 
 pulse_l:
-p_2:		.byte	$89,$20,$ff
+p_2:		.byte	$8a,$20,$ff
 
 pulse_h:
-		.byte	$00,$08,$00
+		.byte	$00,$20,$00
 
 filter_l:
 f_1:		.byte	$80,$ff

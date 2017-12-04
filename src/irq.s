@@ -63,7 +63,7 @@ irq_init:
 		sta	$1
 
 		; configure VIC IRQ
-		lda	#$fb
+		lda	#$f2
 		sta	VIC_RASTER
 		lda	VIC_CTL1
 		and	#$7f
@@ -87,7 +87,7 @@ isr:
 		lda	VIC_RASTER
 		bpl	isr_upper
 
-		lda	#$5f
+		lda	#$56
 		sta	VIC_RASTER
 		dec	framephase
 		bpl	isr_nodraw
@@ -103,7 +103,7 @@ isr_nodraw:	inc	$d020
 		jsr	js_check
 		jmp	isr_bottom
 
-isr_upper:	lda	#$fb
+isr_upper:	lda	#$f2
 		sta	VIC_RASTER
 		inc	$d020
 		jsr	snd_out
