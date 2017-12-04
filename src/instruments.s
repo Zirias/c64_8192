@@ -14,7 +14,7 @@
 
 inst_ad:
 		.byte	$00
-		.byte	$11
+		.byte	$53
 		.byte	$11
 		.byte	$32
 
@@ -32,8 +32,8 @@ inst_wt:
 
 inst_pt:
 		.byte	$00
-		.byte	p_1 - pulse_l+1
-		.byte	p_1 - pulse_l+1
+		.byte	$00
+		.byte	p_2 - pulse_l+1
 		.byte	$00
 
 inst_ft:
@@ -43,8 +43,7 @@ inst_ft:
 		.byte	$00
 
 wave_l:
-w_1:		.byte	$41,$41,$41,$41,$41,$41,$41,$41
-		.byte	$40,$ff
+w_1:		.byte	$11,$ff
 w_2:		.byte	$41,$41,$41,$41,$41,$41,$41,$41
 		.byte	$41,$41,$41,$41,$41,$41,$41,$41
 		.byte	$41,$41,$41,$41,$41,$41,$41,$41
@@ -53,7 +52,6 @@ w_3:		.byte	$21,$21,$21,$21,$21,$21,$21,$21
 		.byte	$20,$ff
 
 wave_h:
-		.byte	$00,$00,$00,$00,$00,$00,$00,$00
 		.byte	$00,$00
 		.byte	$f7,$fb,$00,$f7,$fb,$00,$f7,$fb
 		.byte	$00,$f7,$fb,$00,$f7,$fb,$00,$f7
@@ -63,7 +61,7 @@ wave_h:
 		.byte	$00,$00
 
 pulse_l:
-p_1:		.byte	$89,$20,$ff
+p_2:		.byte	$89,$20,$ff
 
 pulse_h:
 		.byte	$00,$08,$00

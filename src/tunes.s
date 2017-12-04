@@ -29,16 +29,16 @@ patterns_h:
 pat1:
 		.byte $01,PT_C3
 		.byte $00
-		.byte $00
+		.byte $80
 		.byte $01,PT_G3
 		.byte $01,PT_C4
 		.byte $00
 		.byte $01,PT_BF3
 		.byte $00
 		.byte $01,PT_F3
-		.byte $00
+		.byte $80
 		.byte $01,PT_BF3
-		.byte $00
+		.byte $80
 		.byte $01,PT_A3
 		.byte $00
 		.byte $01,PT_G3

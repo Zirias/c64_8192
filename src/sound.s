@@ -13,18 +13,20 @@ HR_TIMER	= $6
 .zeropage
 
 tune:		.res	1
+patptr0:	.res	2
+patpos0:	.res	1
 nexttune:	.res	1
 tuneptr:	.res	2
 tunepos:	.res	1
+patptr1:	.res	2
+patpos1:	.res	1
 speed:		.res	1
 stepcount:	.res	1
 hrstep:		.res	1
-patptr0:	.res	2
-patptr1:	.res	2
+tmp:		.res	1
 patptr2:	.res	2
-patpos0:	.res	1
-patpos1:	.res	1
 patpos2:	.res	1
+patptr:		.res	2
 wtpos0:		.res	1
 ptpos0:		.res	1
 ftpos0:		.res	1
@@ -46,7 +48,6 @@ inst2:		.res	1
 pitch2:		.res	1
 pstep2:		.res	1
 fstep2:		.res	1
-tmp:		.res	1
 s_freqlo1:	.res	1
 s_freqhi1:	.res	1
 s_pwlo1:	.res	1
@@ -161,14 +162,24 @@ snd_gototune:
 		iny
 		bne	ts_nextcmd
 
+ss_setpatptr:
+		lda	patptr0,x
+		sta	patptr
+		lda	patptr0+1,x
+		sta	patptr+1
+		rts
+
 ss_hr_pre:
+		ldy	inst0,x
+		beq	ss_hrpredone
+		bmi	ss_hrpredone
 		lda	inst_ad,y
 		sta	s_ad1,x
 		lda	inst_sr,y
 		sta	s_sr1,x
 		lda	#$09
 		sta	s_cr1,x
-		rts
+ss_hrpredone:	rts
 
 ss_wavetbl:	ldy	wtpos0,x
 ss_wtjmp:	beq	ss_wtdone
@@ -228,142 +239,100 @@ ss_setpulse:	and	#$f
 ss_ptdone:	sty	ptpos0,x
 		rts
 
-snd_nextpat:
+ss_hr_off:
+		jsr	ss_setpatptr
+		ldy	patpos0,x
+		cpy	#$ff
+		bne	shro_do
+		lda	#$0
+		beq	shro_sti
+shro_do:	lda	(patptr),y
+shro_sti:	sta	inst0,x
+		beq	shro_done
+		cmp	#$ff
+		bne	shro_hro
+		rts
+shro_hro:	lda	inst0,x
+		bmi	shro_done
+		lda	#$0
+		sta	s_ad1,x
+		sta	s_sr1,x
+		sta	wtpos0,x
+		sta	ptpos0,x
+		sta	ftpos0,x
+sff_gateoff:	lda	s_cr1,x
+		and	#$fe
+		sta	s_cr1,x
+shro_done:	clc
+		rts
+
+ss_firstframe:
+		jsr	ss_setpatptr
+		ldy	patpos0,x
+		lda	inst0,x
+		beq	sff_patstep
+		bpl	sff_startinst
+		jsr	sff_gateoff
+		bcc	sff_patstep
+sff_startinst:	sty	tmp
+		tay
+		lda	inst_wt,y
+		sta	wtpos0,x
+		lda	inst_pt,y
+		sta	ptpos0,x
+		lda	inst_ft,y
+		sta	ftpos0,x
+		ldy	tmp
+		iny
+		lda	(patptr),y
+		sta	pitch0,x
+sff_patstep:	iny
+		beq	sff_done
+		sty	patpos0,x
+sff_done:	rts
+
+ss_nextpat:
 		jsr	snd_tunestep
-snd_hr_off:
-		ldy	patpos0
-		cpy	#$ff
-		bne	ss_hr_do0
-		lda	#$0
-		beq	ss_hr_sti0
-ss_hr_do0:	lda	(patptr0),y
-ss_hr_sti0:	sta	inst0
-		beq	ss_hr_off1
-		cmp	#$ff
-		beq	snd_nextpat
-		lda	#$0
-		sta	s_ad1
-		sta	s_sr1
-		sta	wtpos0
-		sta	ptpos0
-		sta	ftpos0
-		lda	s_cr1
-		and	#$fe
-		sta	s_cr1
-ss_hr_off1:	ldy	patpos1
-		cpy	#$ff
-		bne	ss_hr_do1
-		lda	#$0
-		beq	ss_hr_sti1
-ss_hr_do1:	lda	(patptr1),y
-ss_hr_sti1:	sta	inst1
-		beq	ss_hr_off2
-		cmp	#$ff
-		beq	snd_nextpat
-		lda	#$0
-		sta	s_ad2
-		sta	s_sr2
-		sta	wtpos1
-		sta	ptpos1
-		sta	ftpos1
-		lda	s_cr2
-		and	#$fe
-		sta	s_cr2
-ss_hr_off2:	ldy	patpos2
-		cpy	#$ff
-		bne	ss_hr_do2
-		lda	#$0
-		beq	ss_hr_sti2
-ss_hr_do2:	lda	(patptr2),y
-ss_hr_sti2:	sta	inst2
-		beq	ss_hr_done
-		cmp	#$ff
-		beq	snd_nextpat
-		lda	#$0
-		sta	s_ad3
-		sta	s_sr3
-		sta	wtpos2
-		sta	ptpos2
-		sta	ftpos2
-		lda	s_cr3
-		and	#$fe
-		sta	s_cr3
-ss_hr_done:	jmp	ss_tablestep
+		jmp	ss_hr_offsteps
 
 snd_step:
 		ldx	hrstep
 		beq	ss_no_hr
 		dex
 		stx	hrstep
-		beq	ss_hr_pre0
+		beq	ss_hr_presteps
 		cpx	#HR_TIMER-1
-		bne	ss_hr_done
-		jmp	snd_hr_off
-ss_hr_pre0:	ldy	inst0
-		beq	ss_hr_pre1
-		ldx	#$0
+		bne	ss_tablestep
+ss_hr_offsteps:	ldx	#$0
+		jsr	ss_hr_off
+		bcs	ss_nextpat
+		ldx	#$7
+		jsr	ss_hr_off
+		bcs	ss_nextpat
+		ldx	#$e
+		jsr	ss_hr_off
+		bcs	ss_nextpat
+		bcc	ss_tablestep
+ss_hr_presteps:	ldx	#$0
 		jsr	ss_hr_pre
-ss_hr_pre1:	ldy	inst1
-		beq	ss_hr_pre2
 		ldx	#$7
 		jsr	ss_hr_pre
-ss_hr_pre2:	ldy	inst2
-		beq	ss_hr_speed
 		ldx	#$e
 		jsr	ss_hr_pre
 ss_hr_speed:	lda	#$80
 		sta	stepcount
-		bmi	ss_hr_done
+		bmi	ss_tablestep
 ss_no_hr:	ldx	stepcount
 		bpl	ss_normalstep
 		lda	speed
 		sta	stepcount
-		ldy	patpos0
-		ldx	inst0
-		beq	ss_patstep1
-		lda	inst_wt,x
-		sta	wtpos0
-		lda	inst_pt,x
-		sta	ptpos0
-		lda	inst_ft,x
-		sta	ftpos0
-		iny
-		lda	(patptr0),y
-		sta	pitch0
-ss_patstep1:	iny
-		beq	ss_posskip0
-		sty	patpos0
-ss_posskip0:	ldy	patpos1
-		ldx	inst1
-		beq	ss_patstep2
-		lda	inst_wt,x
-		sta	wtpos1
-		lda	inst_pt,x
-		sta	ptpos1
-		lda	inst_ft,x
-		sta	ftpos1
-		iny
-		lda	(patptr1),y
-		sta	pitch1
-ss_patstep2:	iny
-		beq	ss_posskip1
-		sty	patpos1
-ss_posskip1:	ldy	patpos2
-		ldx	inst2
-		beq	ss_patstepdone
-		lda	inst_wt,x
-		sta	wtpos2
-		lda	inst_pt,x
-		sta	ptpos2
-		lda	inst_ft,x
-		sta	ftpos2
-		iny
-		lda	(patptr2),y
-		sta	pitch2
-ss_patstepdone:	iny
-		beq	ss_posskip2
-		sty	patpos2
-ss_posskip2:	ldx	stepcount
+		ldx	#$0
+		jsr	ss_firstframe
+		ldx	#$7
+		jsr	ss_firstframe
+		ldx	#$e
+		jsr	ss_firstframe
+		ldx	stepcount
 ss_normalstep:	dex
 		stx	stepcount
 		bpl	ss_tablestep
