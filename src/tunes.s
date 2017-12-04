@@ -29,21 +29,21 @@ patterns_h:
 pat1:
 		.byte $01,PT_C3
 		.byte $00
-		.byte $80
+		.byte $c0
 		.byte $01,PT_G3
 		.byte $01,PT_C4
 		.byte $00
 		.byte $01,PT_BF3
 		.byte $00
 		.byte $01,PT_F3
-		.byte $80
+		.byte $c0
 		.byte $01,PT_BF3
-		.byte $80
+		.byte $c0
 		.byte $01,PT_A3
 		.byte $00
-		.byte $01,PT_G3
+		.byte $80,PT_G3
 		.byte $00
-		.byte $01,PT_F3
+		.byte $80,PT_F3
 		.byte $00
 		.byte $ff
 
@@ -67,21 +67,21 @@ pat2:		.byte $02,PT_C4
 		.byte $00
 		.byte $ff
 
-pat3:		.byte $03,PT_C2
+pat3:		.byte $03,PT_C1
 		.byte $00
 		.byte $00
 		.byte $00
 		.byte $00
 		.byte $00
-		.byte $03,PT_BF1
+		.byte $03,PT_BF0
 		.byte $00
 		.byte $00
 		.byte $00
 		.byte $00
 		.byte $00
-		.byte $03,PT_F1
+		.byte $03,PT_F0
 		.byte $00
-		.byte $03,PT_F1
+		.byte $03,PT_F0
 		.byte $00
 		.byte $00
 		.byte $00

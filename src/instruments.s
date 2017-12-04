@@ -20,7 +20,7 @@ inst_ad:
 
 inst_sr:
 		.byte	$00
-		.byte	$a9
+		.byte	$ab
 		.byte	$a9
 		.byte	$cc
 

@@ -181,16 +181,7 @@ ss_hr_pre:
 		sta	s_cr1,x
 ss_hrpredone:	rts
 
-ss_wavetbl:	ldy	wtpos0,x
-ss_wtjmp:	beq	ss_wtdone
-		lda	wave_l-1,y
-		cmp	#$ff
-		bne	ss_dowave
-		lda	wave_h-1,y
-		tay
-		bcs	ss_wtjmp
-ss_dowave:	sta	s_cr1,x
-		lda	wave_h-1,y
+ss_setpitch:
 		sty	tmp
 		clc
 		adc	pitch0,x
@@ -200,8 +191,24 @@ ss_dowave:	sta	s_cr1,x
 		lda	pitches_h,y
 		sta	s_freqhi1,x
 		ldy	tmp
+		rts
+
+ss_wavetbl:	ldy	wtpos0,x
+ss_wtjmp:	bne	ss_wtfetch
+		lda	#$0
+		jsr	ss_setpitch
+		rts
+ss_wtfetch:	lda	wave_l-1,y
+		cmp	#$ff
+		bne	ss_dowave
+		lda	wave_h-1,y
+		tay
+		bcs	ss_wtjmp
+ss_dowave:	sta	s_cr1,x
+		lda	wave_h-1,y
+		jsr	ss_setpitch
 		iny
-ss_wtdone:	sty	wtpos0,x
+		sty	wtpos0,x
 		rts
 
 ss_pulsetbl:	ldy	ptpos0,x
@@ -272,6 +279,8 @@ ss_firstframe:
 		lda	inst0,x
 		beq	sff_patstep
 		bpl	sff_startinst
+		asl	a
+		bpl	sff_setpitch
 		jsr	sff_gateoff
 		bcc	sff_patstep
 sff_startinst:	sty	tmp
@@ -283,7 +292,7 @@ sff_startinst:	sty	tmp
 		lda	inst_ft,y
 		sta	ftpos0,x
 		ldy	tmp
-		iny
+sff_setpitch:	iny
 		lda	(patptr),y
 		sta	pitch0,x
 sff_patstep:	iny
