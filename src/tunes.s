@@ -14,7 +14,7 @@ tunes_l:	.byte <tune_ingame
 tunes_h:	.byte >tune_ingame
 
 tune_ingame:
-		.byte $08
+		.byte $13
 		.byte $00,$01,$00,$00
 		.byte $00,$01,$02,$00
 		.byte $00,$01,$03,$00

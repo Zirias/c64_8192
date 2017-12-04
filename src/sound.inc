@@ -1,4 +1,5 @@
 .import snd_init
+.import snd_out
 .import snd_settune
 .import snd_step
 
