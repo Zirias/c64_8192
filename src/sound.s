@@ -173,9 +173,9 @@ ss_hr_pre:
 		ldy	inst0,x
 		beq	ss_hrpredone
 		bmi	ss_hrpredone
-		lda	inst_ad,y
+		lda	inst_ad-1,y
 		sta	s_ad1,x
-		lda	inst_sr,y
+		lda	inst_sr-1,y
 		sta	s_sr1,x
 		lda	#$09
 		sta	s_cr1,x
@@ -325,11 +325,11 @@ ss_firstframe:
 		bcc	sff_patstep
 sff_startinst:	sty	tmp
 		tay
-		lda	inst_wt,y
+		lda	inst_wt-1,y
 		sta	wtpos0,x
-		lda	inst_pt,y
+		lda	inst_pt-1,y
 		sta	ptpos0,x
-		lda	inst_ft,y
+		lda	inst_ft-1,y
 		sta	ftpos0,x
 		lda	#$0
 		sta	pstep0,x

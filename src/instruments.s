@@ -13,31 +13,26 @@
 .data
 
 inst_ad:
-		.byte	$00
-		.byte	$53
+		.byte	$13
 		.byte	$11
 		.byte	$32
 
 inst_sr:
-		.byte	$00
 		.byte	$ab
 		.byte	$a9
-		.byte	$cc
+		.byte	$8c
 
 inst_wt:
-		.byte	$00
 		.byte	w_1 - wave_l+1
 		.byte	w_2 - wave_l+1
 		.byte	w_3 - wave_l+1
 
 inst_pt:
 		.byte	$00
-		.byte	$00
 		.byte	p_2 - pulse_l+1
 		.byte	$00
 
 inst_ft:
-		.byte	$00
 		.byte	$00
 		.byte	f_1 - filter_l+1
 		.byte	f_2 - filter_l+1
