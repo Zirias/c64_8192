@@ -63,10 +63,10 @@ wave_h:
 		.byte	$00,$00
 
 pulse_l:
-p_1:		.byte	$8a,$ff
+p_1:		.byte	$89,$20,$ff
 
 pulse_h:
-		.byte	$00,$00
+		.byte	$00,$08,$00
 
 filter_l:
 f_1:		.byte	$90,$00,$20,$ff

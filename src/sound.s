@@ -23,26 +23,30 @@ patptr0:	.res	2
 patptr1:	.res	2
 patptr2:	.res	2
 patpos0:	.res	1
+patpos1:	.res	1
+patpos2:	.res	1
 wtpos0:		.res	1
 ptpos0:		.res	1
 ftpos0:		.res	1
 inst0:		.res	1
 pitch0:		.res	1
-tmp0:		.res	1
-patpos1:	.res	1
+pstep0:		.res	1
+fstep0:		.res	1
 wtpos1:		.res	1
 ptpos1:		.res	1
 ftpos1:		.res	1
 inst1:		.res	1
 pitch1:		.res	1
-tmp1:		.res	1
-patpos2:	.res	1
+pstep1:		.res	1
+fstep1:		.res	1
 wtpos2:		.res	1
 ptpos2:		.res	1
 ftpos2:		.res	1
 inst2:		.res	1
 pitch2:		.res	1
-tmp2:		.res	1
+pstep2:		.res	1
+fstep2:		.res	1
+tmp:		.res	1
 s_freqlo1:	.res	1
 s_freqhi1:	.res	1
 s_pwlo1:	.res	1
@@ -176,7 +180,7 @@ ss_wtjmp:	beq	ss_wtdone
 		bcs	ss_wtjmp
 ss_dowave:	sta	s_cr1,x
 		lda	wave_h-1,y
-		sty	tmp0,x
+		sty	tmp
 		clc
 		adc	pitch0,x
 		tay
@@ -184,20 +188,39 @@ ss_dowave:	sta	s_cr1,x
 		sta	s_freqlo1,x
 		lda	pitches_h,y
 		sta	s_freqhi1,x
-		ldy	tmp0,x
+		ldy	tmp
 		iny
 ss_wtdone:	sty	wtpos0,x
 		rts
 
 ss_pulsetbl:	ldy	ptpos0,x
 ss_ptjmp:	beq	ss_ptdone
-		lda	pulse_l-1,y
-		cmp	#$ff
-		bne	ss_dopulse
+		lda	pstep0,x
+		beq	ss_preadtbl
+ss_dostep:	dec	pstep0,x
+		lda	#$0
+		sta	tmp
+		lda	pulse_h-1,y
+		bpl	ss_poffplus
+		dec	tmp
+ss_poffplus:	clc
+		adc	s_pwlo1,x
+		sta	s_pwlo1,x
+		lda	tmp
+		adc	s_pwhi1,x
+		and	#$f
+		sta	s_pwhi1,x
+		rts
+ss_preadtbl:	lda	pulse_l-1,y
+		bmi	ss_nostep
+		sta	pstep0,x
+		bpl	ss_dostep
+ss_nostep:	cmp	#$ff
+		bne	ss_setpulse
 		lda	pulse_h-1,y
 		tay
 		bcs	ss_ptjmp
-ss_dopulse:	and	#$f
+ss_setpulse:	and	#$f
 		sta	s_pwhi1,x
 		lda	pulse_h-1,y
 		sta	s_pwlo1,x
