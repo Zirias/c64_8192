@@ -215,8 +215,7 @@ ss_pulsetbl:	ldy	ptpos0,x
 ss_ptjmp:	beq	ss_ptdone
 		lda	pstep0,x
 		beq	ss_preadtbl
-ss_dostep:	dec	pstep0,x
-		lda	#$0
+ss_dopstep:	lda	#$0
 		sta	tmp
 		lda	pulse_h-1,y
 		bpl	ss_poffplus
@@ -228,12 +227,14 @@ ss_poffplus:	clc
 		adc	s_pwhi1,x
 		and	#$f
 		sta	s_pwhi1,x
+		dec	pstep0,x
+		beq	ss_ptnext
 		rts
 ss_preadtbl:	lda	pulse_l-1,y
-		bmi	ss_nostep
+		bmi	ss_nopstep
 		sta	pstep0,x
-		bpl	ss_dostep
-ss_nostep:	cmp	#$ff
+		bpl	ss_dopstep
+ss_nopstep:	cmp	#$ff
 		bne	ss_setpulse
 		lda	pulse_h-1,y
 		tay
@@ -242,9 +243,48 @@ ss_setpulse:	and	#$f
 		sta	s_pwhi1,x
 		lda	pulse_h-1,y
 		sta	s_pwlo1,x
-		iny
+ss_ptnext:	iny
 ss_ptdone:	sty	ptpos0,x
 		rts
+
+ss_filtertbl:
+		ldy	ftpos0,x
+ss_ftjmp:	beq	ss_ftdone
+		lda	fstep0,x
+		beq	ss_freadtbl
+ss_dofstep:	lda	filter_h-1,y
+		clc
+		adc	s_fchi
+		sta	s_fchi
+		dec	fstep0,x
+		beq	ss_ftnext
+		rts
+ss_freadtbl:	lda	filter_l-1,y
+		beq	ss_setfilter
+		bpl	ss_filtermod
+		cmp	#$ff
+		bne	ss_filtercfg
+		lda	filter_h-1,y
+		tay
+		bcs	ss_ftjmp
+ss_filtermod:	sta	fstep0,x
+		bne	ss_dofstep
+ss_setfilter:	lda	filter_h-1,y
+		sta	s_fchi
+ss_ftnext:	iny
+ss_ftdone:	sty	ftpos0,x
+		rts
+ss_filtercfg:	and	#$70
+		sta	tmp
+		lda	s_modevol
+		and	#$f
+		ora	tmp
+		sta	s_modevol
+		lda	filter_h-1,y
+		sta	s_resflt
+		iny
+		bne	ss_freadtbl
+		beq	ss_ftdone
 
 ss_hr_off:
 		jsr	ss_setpatptr
@@ -291,6 +331,9 @@ sff_startinst:	sty	tmp
 		sta	ptpos0,x
 		lda	inst_ft,y
 		sta	ftpos0,x
+		lda	#$0
+		sta	pstep0,x
+		sta	fstep0,x
 		ldy	tmp
 sff_setpitch:	iny
 		lda	(patptr),y
@@ -357,11 +400,14 @@ ss_sametune:	cmp	#$ff
 ss_tablestep:	ldx	#$0
 		jsr	ss_wavetbl
 		jsr	ss_pulsetbl
+		jsr	ss_filtertbl
 		ldx	#$7
 		jsr	ss_wavetbl
 		jsr	ss_pulsetbl
+		jsr	ss_filtertbl
 		ldx	#$e
 		jsr	ss_wavetbl
 		jsr	ss_pulsetbl
+		jsr	ss_filtertbl
 
 ss_done:	rts

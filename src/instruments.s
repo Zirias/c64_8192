@@ -26,9 +26,9 @@ inst_sr:
 
 inst_wt:
 		.byte	$00
-		.byte	w_1 -wave_l+1
-		.byte	w_2 -wave_l+1
-		.byte	w_3 -wave_l+1
+		.byte	w_1 - wave_l+1
+		.byte	w_2 - wave_l+1
+		.byte	w_3 - wave_l+1
 
 inst_pt:
 		.byte	$00
@@ -38,9 +38,9 @@ inst_pt:
 
 inst_ft:
 		.byte	$00
+		.byte	$00
 		.byte	f_1 - filter_l+1
-		.byte	$00
-		.byte	$00
+		.byte	f_2 - filter_l+1
 
 wave_l:
 w_1:		.byte	$11,$ff
@@ -67,8 +67,10 @@ pulse_h:
 		.byte	$00,$08,$00
 
 filter_l:
-f_1:		.byte	$90,$00,$20,$ff
+f_1:		.byte	$80,$ff
+f_2:		.byte	$90,$00,$10,$ff
 
 filter_h:
-		.byte	$21,$c0,$fa,$00
+		.byte	$00,$00
+		.byte	$22,$48,$fc,$00
 
