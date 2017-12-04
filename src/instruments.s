@@ -14,15 +14,15 @@
 
 inst_ad:
 		.byte	$13
-		.byte	$14
+		.byte	$12
 		.byte	$32
-		.byte	$14
+		.byte	$12
 
 inst_sr:
 		.byte	$ab
-		.byte	$79
+		.byte	$68
 		.byte	$8c
-		.byte	$79
+		.byte	$68
 
 inst_wt:
 		.byte	w_1 - wave_l+1
