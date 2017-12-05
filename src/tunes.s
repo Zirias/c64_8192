@@ -19,15 +19,17 @@ tune_ingame:
 		.byte	$00,$01,$02,$00
 		.byte	$00,$01,$03,$00
 		.byte	$00,$01,$06,$00
-		.byte	$00,$04,$00,$00
-		.byte	$00,$05,$00,$00
-		.byte	$80,$05
+		.byte	$00,$04,$07,$00
+		.byte	$00,$05,$08,$00
+		.byte	$80,$09
 
 patterns_l:
 		.byte	<pat1, <pat2, <pat3, <pat4, <pat5, <pat6
+		.byte	<pat7, <pat8
 
 patterns_h:
 		.byte	>pat1, >pat2, >pat3, >pat4, >pat5, >pat6
+		.byte	>pat7, >pat8
 
 pat1:
 		.byte	$01,PT_C3
@@ -259,3 +261,80 @@ pat6:		.byte	$03,PT_C1
 		.byte	$04,PT_C3
 		.byte	$00
 		.byte	$ff
+
+pat7:		.byte	$03,PT_F1
+		.byte	$00
+		.byte	$04,PT_F3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$04,PT_F3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_F1
+		.byte	$00
+		.byte	$03,PT_C1
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_D1
+		.byte	$00
+		.byte	$05,PT_D3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_F1
+		.byte	$00
+		.byte	$03,PT_A0
+		.byte	$00
+		.byte	$05,PT_A2
+		.byte	$00
+		.byte	$02,PT_D3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$02,PT_D3
+		.byte	$00
+		.byte	$ff
+
+pat8:		.byte	$03,PT_C1
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$03,PT_C1
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$03,PT_D1
+		.byte	$00
+		.byte	$05,PT_D3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$05,PT_D3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$07,PT_A3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$ff
+
