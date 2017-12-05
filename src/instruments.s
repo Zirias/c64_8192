@@ -61,7 +61,7 @@ inst_ft:
 		.byte	f_1 - filter_l+1
 
 inst_vdelay:
-		.byte	$18
+		.byte	$0c
 		.byte	$00
 		.byte	$00
 		.byte	$00
@@ -70,7 +70,7 @@ inst_vdelay:
 		.byte	$00
 
 inst_vcount:
-		.byte	$08
+		.byte	$04
 		.byte	$00
 		.byte	$00
 		.byte	$00
@@ -79,7 +79,7 @@ inst_vcount:
 		.byte	$00
 
 inst_voff:
-		.byte	$0c
+		.byte	$12
 		.byte	$00
 		.byte	$00
 		.byte	$00
@@ -90,34 +90,26 @@ inst_voff:
 wave_l:
 w_1:		.byte	$11,$ff
 w_2:		.byte	$41,$41,$41,$41,$41,$41
-		.byte	$41,$41,$41,$41,$41,$41
 		.byte	$41,$41,$41,$40,$40,$40,$ff
 w_3:		.byte	$21,$21,$21,$20,$ff
 w_4:		.byte	$41,$41,$41,$41,$41,$41
-		.byte	$41,$41,$41,$41,$41,$41
 		.byte	$41,$41,$41,$40,$40,$40,$ff
 w_5:		.byte	$41,$41,$41,$41,$41,$41
-		.byte	$41,$41,$41,$41,$41,$41
 		.byte	$41,$41,$41,$40,$40,$40,$ff
 w_6:		.byte	$41,$41,$41,$41,$41,$41
-		.byte	$41,$41,$41,$41,$41,$41
 		.byte	$41,$41,$41,$40,$40,$40,$ff
 
 wave_h:
 		.byte	$00,$00
 		.byte	$f7,$fb,$00,$f7,$fb,$00
-		.byte	$f7,$fb,$00,$f7,$fb,$00
-		.byte	$f7,$fb,$00,$f7,$fb,$00,w_2 -wave_l+16
+		.byte	$f7,$fb,$00,$f7,$fb,$00,w_2 -wave_l+10
 		.byte	$00,$00,$00,$00,$00
 		.byte	$00,$04,$07,$00,$04,$07
-		.byte	$00,$04,$07,$00,$04,$07
-		.byte	$00,$04,$07,$00,$04,$07,w_4 -wave_l+16
+		.byte	$00,$04,$07,$00,$04,$07,w_4 -wave_l+10
 		.byte	$00,$03,$07,$00,$03,$07
-		.byte	$00,$03,$07,$00,$03,$07
-		.byte	$00,$03,$07,$00,$03,$07,w_5 -wave_l+16
+		.byte	$00,$03,$07,$00,$03,$07,w_5 -wave_l+10
 		.byte	$fb,$00,$03,$fb,$00,$03
-		.byte	$fb,$00,$03,$fb,$00,$03
-		.byte	$fb,$00,$03,$fb,$00,$03,w_6 -wave_l+16
+		.byte	$fb,$00,$03,$fb,$00,$03,w_6 -wave_l+10
 
 pulse_l:
 p_2:		.byte	$8a,$20,$ff
@@ -127,9 +119,9 @@ pulse_h:
 
 filter_l:
 f_1:		.byte	$80,$ff
-f_2:		.byte	$90,$00,$10,$ff
+f_2:		.byte	$90,$00,$08,$ff
 
 filter_h:
 		.byte	$00,$00
-		.byte	$22,$48,$fc,$00
+		.byte	$22,$48,$f8,$00
 

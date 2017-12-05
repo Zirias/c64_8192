@@ -8,7 +8,7 @@
 .export snd_settune
 .export snd_step
 
-HR_TIMER	= $6
+HR_TIMER	= $3
 
 .zeropage
 
@@ -371,10 +371,10 @@ sff_startinst:	sty	tmp
 		sta	vdel0,x
 		lda	inst_vcount-1,y
 		sta	vcnt0,x
-		lda	inst_voff-1,y
-		sta	voff0,x
 		lsr	a
 		sta	vcurr0,x
+		lda	inst_voff-1,y
+		sta	voff0,x
 		lda	#$0
 		sta	pstep0,x
 		sta	fstep0,x

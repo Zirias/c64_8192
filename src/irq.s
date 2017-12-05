@@ -89,18 +89,12 @@ isr:
 
 		lda	#$56
 		sta	VIC_RASTER
-		inc	$d020
-		jsr	snd_out
-		dec	$d020
 		dec	framephase
 		bpl	isr_nodraw
 		lda	#FRAMESKIP
 		sta	framephase
 		jsr	screen_refresh
-isr_nodraw:	inc	$d020
-		jsr	snd_step
-		dec	$d020
-		jsr	js_check
+isr_nodraw:	jsr	js_check
 		jmp	isr_bottom
 
 isr_upper:	lda	#$f2
