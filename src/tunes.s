@@ -117,11 +117,11 @@ pat3:		.byte	$03,PT_C1
 		.byte	$00
 		.byte	$c0
 		.byte	$00
-		.byte	$04,PT_A3
+		.byte	$04,PT_F3
 		.byte	$00
 		.byte	$c0
 		.byte	$00
-		.byte	$04,PT_A3
+		.byte	$04,PT_F3
 		.byte	$c0
 		.byte	$03,PT_C1
 		.byte	$00

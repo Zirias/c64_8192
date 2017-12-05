@@ -181,10 +181,10 @@ ss_hr_pre:
 		sta	s_cr1,x
 ss_hrpredone:	rts
 
-ss_setpitch:
-		sty	tmp
+ss_setpitchoff:
 		clc
 		adc	pitch0,x
+ss_setpitch:	sty	tmp
 		tay
 		lda	pitches_l,y
 		sta	s_freqlo1,x
@@ -194,11 +194,8 @@ ss_setpitch:
 		rts
 
 ss_wavetbl:	ldy	wtpos0,x
-ss_wtjmp:	bne	ss_wtfetch
-		lda	#$0
-		jsr	ss_setpitch
-		rts
-ss_wtfetch:	lda	wave_l-1,y
+ss_wtjmp:	beq	ss_wtdone
+		lda	wave_l-1,y
 		cmp	#$ff
 		bne	ss_dowave
 		lda	wave_h-1,y
@@ -206,9 +203,9 @@ ss_wtfetch:	lda	wave_l-1,y
 		bcs	ss_wtjmp
 ss_dowave:	sta	s_cr1,x
 		lda	wave_h-1,y
-		jsr	ss_setpitch
+		jsr	ss_setpitchoff
 		iny
-		sty	wtpos0,x
+ss_wtdone:	sty	wtpos0,x
 		rts
 
 ss_pulsetbl:	ldy	ptpos0,x
@@ -338,6 +335,7 @@ sff_startinst:	sty	tmp
 sff_setpitch:	iny
 		lda	(patptr),y
 		sta	pitch0,x
+		jsr	ss_setpitch
 sff_patstep:	iny
 		beq	sff_done
 		sty	patpos0,x
