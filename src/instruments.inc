@@ -3,6 +3,9 @@
 .import	inst_wt
 .import	inst_pt
 .import	inst_ft
+.import inst_vdelay
+.import inst_vcount
+.import inst_voff
 .import wave_l
 .import wave_h
 .import pulse_l

@@ -3,6 +3,9 @@
 .export	inst_wt
 .export	inst_pt
 .export	inst_ft
+.export inst_vdelay
+.export inst_vcount
+.export inst_voff
 .export wave_l
 .export wave_h
 .export pulse_l
@@ -41,6 +44,24 @@ inst_ft:
 		.byte	f_1 - filter_l+1
 		.byte	f_2 - filter_l+1
 		.byte	f_1 - filter_l+1
+
+inst_vdelay:
+		.byte	$18
+		.byte	$00
+		.byte	$00
+		.byte	$00
+
+inst_vcount:
+		.byte	$08
+		.byte	$00
+		.byte	$00
+		.byte	$00
+
+inst_voff:
+		.byte	$0c
+		.byte	$00
+		.byte	$00
+		.byte	$00
 
 wave_l:
 w_1:		.byte	$11,$ff

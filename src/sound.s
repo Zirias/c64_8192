@@ -13,19 +13,31 @@ HR_TIMER	= $6
 .zeropage
 
 tune:		.res	1
-patptr0:	.res	2
-patpos0:	.res	1
 nexttune:	.res	1
 tuneptr:	.res	2
 tunepos:	.res	1
-patptr1:	.res	2
-patpos1:	.res	1
 speed:		.res	1
 stepcount:	.res	1
 hrstep:		.res	1
 tmp:		.res	1
+patptr0:	.res	2
+patpos0:	.res	1
+vdel0:		.res	1
+vcnt0:		.res	1
+vcurr0:		.res	1
+voff0:		.res	1
+patptr1:	.res	2
+patpos1:	.res	1
+vdel1:		.res	1
+vcnt1:		.res	1
+vcurr1:		.res	1
+voff1:		.res	1
 patptr2:	.res	2
 patpos2:	.res	1
+vdel2:		.res	1
+vcnt2:		.res	1
+vcurr2:		.res	1
+voff2:		.res	1
 patptr:		.res	2
 wtpos0:		.res	1
 ptpos0:		.res	1
@@ -208,6 +220,33 @@ ss_dowave:	sta	s_cr1,x
 ss_wtdone:	sty	wtpos0,x
 		rts
 
+ss_vib:		lda	vcnt0,x
+		beq	ss_novib
+		lda	vdel0,x
+		beq	ss_dovib
+		dec	vdel0,x
+ss_novib:	rts
+ss_dovib:	lda	#$0
+		sta	tmp
+		lda	voff0,x
+		bpl	ss_vibplus
+		dec	tmp
+ss_vibplus:	clc
+		adc	s_freqlo1,x
+		sta	s_freqlo1,x
+		lda	s_freqhi1,x
+		adc	tmp
+		sta	s_freqhi1,x
+		dec	vcurr0,x
+		bne	ss_vibdone
+		lda	vcnt0,x
+		sta	vcurr0,x
+		lda	voff0,x
+		eor	#$ff
+		sta	voff0,x
+		inc	voff0,x
+ss_vibdone:	rts
+
 ss_pulsetbl:	ldy	ptpos0,x
 ss_ptjmp:	beq	ss_ptdone
 		lda	pstep0,x
@@ -328,6 +367,14 @@ sff_startinst:	sty	tmp
 		sta	ptpos0,x
 		lda	inst_ft-1,y
 		sta	ftpos0,x
+		lda	inst_vdelay-1,y
+		sta	vdel0,x
+		lda	inst_vcount-1,y
+		sta	vcnt0,x
+		lda	inst_voff-1,y
+		sta	voff0,x
+		lsr	a
+		sta	vcurr0,x
 		lda	#$0
 		sta	pstep0,x
 		sta	fstep0,x
@@ -397,14 +444,17 @@ ss_sametune:	cmp	#$ff
 		rts
 ss_tablestep:	ldx	#$0
 		jsr	ss_wavetbl
+		jsr	ss_vib
 		jsr	ss_pulsetbl
 		jsr	ss_filtertbl
 		ldx	#$7
 		jsr	ss_wavetbl
+		jsr	ss_vib
 		jsr	ss_pulsetbl
 		jsr	ss_filtertbl
 		ldx	#$e
 		jsr	ss_wavetbl
+		jsr	ss_vib
 		jsr	ss_pulsetbl
 		jsr	ss_filtertbl
 
