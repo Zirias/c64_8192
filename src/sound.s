@@ -116,19 +116,16 @@ si_clearsid:	sta	SID_FREQLO1,x
 		sta	SID_FREQHI3
 		lda	#$30
 		sta	SID_CR3
-		ldy	#$20
+		ldy	#$10
 		ldx	#$0
 si_testloop:	lda	SID_OSC3
 		bpl	si_nopeak
 		inc	tmp
-		beq	si_is8580
+		bmi	si_is8580
 si_nopeak:	dex
 		bne	si_testloop
 		dey
 		bne	si_testloop
-		lda	tmp
-		cmp	#$8
-		bcs	si_is8580
 
 		ldx	#$3
 dbg_6581:	lda	sm_6581,x
