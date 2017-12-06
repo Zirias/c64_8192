@@ -7,6 +7,7 @@
 .export snd_out
 .export snd_settune
 .export snd_step
+.export snd_fx
 
 HR_TIMER	= $3
 
@@ -39,6 +40,11 @@ vcnt2:		.res	1
 vcurr2:		.res	1
 voff2:		.res	1
 patptr:		.res	2
+sfxq:		.res	8
+sfxfront:	.res	1
+sfxback:	.res	1
+sfxcurr:	.res	1
+sfxhr:		.res	1
 wtpos0:		.res	1
 ptpos0:		.res	1
 ftpos0:		.res	1
@@ -413,7 +419,7 @@ shro_sti:	sta	inst0,x
 		rts
 shro_hro:	lda	inst0,x
 		bmi	shro_done
-		lda	#$0
+shro_sfx:	lda	#$0
 		sta	s_ad1,x
 		sta	s_sr1,x
 		sta	wtpos0,x
@@ -468,8 +474,30 @@ ss_nextpat:
 		jsr	snd_tunestep
 		jmp	ss_hr_offsteps
 
+snd_fx:
+		ldx	sfxfront
+		dex
+		bpl	sfx_idxok
+		ldx	#$7
+sfx_idxok:	sta	sfxq,x
+		stx	sfxfront
+		rts
+
 snd_step:
-		ldx	hrstep
+		lda	sfxcurr
+		bne	ss_nonewfx
+		ldx	sfxback
+		cpx	sfxfront
+		beq	ss_nonewfx
+		dex
+		bpl	ss_deqfxok
+		ldx	#$7
+ss_deqfxok:	lda	sfxq,x
+		sta	sfxcurr
+		stx	sfxback
+		lda	#HR_TIMER
+		sta	sfxhr
+ss_nonewfx:	ldx	hrstep
 		beq	ss_no_hr
 		dex
 		stx	hrstep
@@ -490,6 +518,8 @@ ss_hr_presteps:	ldx	#$0
 		jsr	ss_hr_pre
 		ldx	#$7
 		jsr	ss_hr_pre
+		lda	sfxcurr
+		bne	ss_hr_speed
 		ldx	#$e
 		jsr	ss_hr_pre
 ss_hr_speed:	lda	#$80
@@ -503,9 +533,11 @@ ss_no_hr:	ldx	stepcount
 		jsr	ss_firstframe
 		ldx	#$7
 		jsr	ss_firstframe
+		lda	sfxcurr
+		bne	ss_skipchan3
 		ldx	#$e
 		jsr	ss_firstframe
-		ldx	stepcount
+ss_skipchan3:	ldx	stepcount
 ss_normalstep:	dex
 		stx	stepcount
 		bpl	ss_tablestep
@@ -528,6 +560,8 @@ ss_tablestep:	ldx	#$0
 		jsr	ss_vib
 		jsr	ss_pulsetbl
 		jsr	ss_filtertbl
+		lda	sfxcurr
+		bne	ss_dosfx
 		ldx	#$e
 		jsr	ss_wavetbl
 		jsr	ss_vib
@@ -535,3 +569,67 @@ ss_tablestep:	ldx	#$0
 		jsr	ss_filtertbl
 
 ss_done:	rts
+
+ss_dosfx:	
+		ldx	sfxhr
+		beq	sfx_nohr
+		dex
+		stx	sfxhr
+		beq	sfx_hrpre
+		cpx	#HR_TIMER-1
+		bne	ss_done
+		ldx	#$e
+		jmp	shro_sfx
+sfx_hrpre:	ldy	sfxcurr
+		lda	sfx_ad-1,y
+		sta	s_ad3
+		lda	sfx_sr-1,y
+		sta	s_sr3
+		lda	#$09
+		sta	s_cr3
+		lda	#$ff
+		sta	wtpos2
+		rts
+sfx_nohr:	ldx	wtpos2
+		inx
+		bne	sfx_step
+		ldy	sfxcurr
+		lda	sfx_wt-1,y
+		sta	wtpos2
+		lda	sfx_pt-1,y
+		sta	ptpos2
+		lda	sfx_ft-1,y
+		sta	ftpos2
+		lda	#$0
+		sta	pstep2
+		sta	fstep2
+		lda	sfx_pitch-1,y
+		sta	pitch2
+		ldx	#$e
+		jmp	ss_setpitch
+sfx_step:	ldy	wtpos2
+		lda	wave_l-1,y
+		cmp	#$ff
+		bne	sfx_dowave
+		lda	#$0
+		sta	sfxcurr
+		rts
+sfx_dowave:	sta	s_cr3
+		lda	#$0
+		sta	tmp
+		lda	wave_h-1,y
+		beq	sfx_wavedone
+		bpl	sfx_pitchplus
+		dec	tmp
+sfx_pitchplus:	clc
+		adc	s_freqlo3
+		sta	s_freqlo3
+		lda	s_freqhi3
+		adc	tmp
+		sta	s_freqhi3
+sfx_wavedone:	inc	wtpos2
+		ldx	#$e
+		jsr	ss_pulsetbl
+		jsr	ss_filtertbl
+		rts
+

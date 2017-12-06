@@ -14,5 +14,11 @@
 .import	flt8580_h
 .import flt6581_l
 .import	flt6581_h
+.import sfx_ad
+.import sfx_sr
+.import sfx_wt
+.import sfx_pt
+.import sfx_ft
+.import sfx_pitch
 
 ; vim: ft=asm:et:si:ts=8:sts=8:sw=8

@@ -1,3 +1,5 @@
+.include "pitches.inc"
+
 .export	inst_ad
 .export	inst_sr
 .export	inst_wt
@@ -14,6 +16,12 @@
 .export	flt8580_h
 .export flt6581_l
 .export	flt6581_h
+.export sfx_ad
+.export sfx_sr
+.export sfx_wt
+.export sfx_pt
+.export sfx_ft
+.export sfx_pitch
 
 .data
 
@@ -100,6 +108,7 @@ w_5:		.byte	$41,$41,$41,$41,$41,$41
 		.byte	$41,$41,$41,$40,$40,$40,$ff
 w_6:		.byte	$41,$41,$41,$41,$41,$41
 		.byte	$41,$41,$41,$40,$40,$40,$ff
+w_7:		.byte	$81,$81,$81,$81,$81,$80,$80,$80,$ff
 
 wave_h:
 		.byte	$00,$00
@@ -112,6 +121,7 @@ wave_h:
 		.byte	$00,$03,$07,$00,$03,$07,w_5 -wave_l+10
 		.byte	$fb,$00,$03,$fb,$00,$03
 		.byte	$fb,$00,$03,$fb,$00,$03,w_6 -wave_l+10
+		.byte	$00,$c0,$a0,$80,$60,$40,$00,$00,$00
 
 pulse_l:
 p_2:		.byte	$8c,$20,$ff
@@ -134,4 +144,22 @@ flt6581_l:
 flt6581_h:
 		.byte	$52,$7b,$f9,$00
 		.byte	$22,$64,$f9,$00
+
+sfx_ad:
+		.byte	$a2
+
+sfx_sr:
+		.byte	$48
+
+sfx_wt:
+		.byte	w_7 - wave_l+1
+
+sfx_pt:
+		.byte	$00
+
+sfx_ft:
+		.byte	$00
+
+sfx_pitch:
+		.byte	PT_G3
 
