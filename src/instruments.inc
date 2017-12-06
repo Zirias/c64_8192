@@ -10,7 +10,9 @@
 .import wave_h
 .import pulse_l
 .import pulse_h
-.import filter_l
-.import	filter_h
+.import flt8580_l
+.import	flt8580_h
+.import flt6581_l
+.import	flt6581_h
 
 ; vim: ft=asm:et:si:ts=8:sts=8:sw=8

@@ -22,8 +22,8 @@ validmove:	.res	1
 		jsr	board_init
 		jsr	screen_init
 		jsr	js_init
-		jsr	snd_init
 		jsr	irq_init
+		jsr	snd_init
 		cli
 
 		lda	#$0

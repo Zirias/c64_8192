@@ -88,6 +88,11 @@ s_modevol:	.res	1
 
 snd_zpsize	= *-tune
 
+.include "vicconfig.inc"
+.data
+sm_6581:	.byte	"6581"
+sm_8580:	.byte	"8580"
+
 .code
 
 snd_init:
@@ -100,7 +105,76 @@ si_zpinit:	sta	tune,x
 		sta	s_modevol
 		lda	#$ff
 		sta	tune
-snd_out:	ldx	#s_modevol - s_freqlo1
+
+		ldx	#$18
+		lda	#$0
+si_clearsid:	sta	SID_FREQLO1,x
+		dex
+		bpl	si_clearsid
+		sta	tmp
+		lda	#$02
+		sta	SID_FREQHI3
+		lda	#$30
+		sta	SID_CR3
+		ldy	#$20
+		ldx	#$0
+si_testloop:	lda	SID_OSC3
+		bpl	si_nopeak
+		inc	tmp
+		beq	si_is8580
+si_nopeak:	dex
+		bne	si_testloop
+		dey
+		bne	si_testloop
+		lda	tmp
+		cmp	#$8
+		bcs	si_is8580
+
+		ldx	#$3
+dbg_6581:	lda	sm_6581,x
+		sta	vic_colram+$94,x
+		dex
+		bpl	dbg_6581
+
+		lda	#<(flt6581_l-1)
+		sta	filt_l0
+		lda	#>(flt6581_l-1)
+		sta	filt_l0 + 1
+		lda	#<(flt6581_h-1)
+		sta	filt_h0
+		sta	filt_h1
+		sta	filt_h2
+		sta	filt_h3
+		lda	#>(flt6581_h-1)
+		sta	filt_h0 + 1
+		sta	filt_h1 + 1
+		sta	filt_h2 + 1
+		sta	filt_h3 + 1
+		bne	snd_out
+si_is8580:
+		ldx	#$3
+dbg_8580:	lda	sm_8580,x
+		sta	vic_colram+$94,x
+		dex
+		bpl	dbg_8580
+
+		lda	#<(flt8580_l-1)
+		sta	filt_l0
+		lda	#>(flt8580_l-1)
+		sta	filt_l0 + 1
+		lda	#<(flt8580_h-1)
+		sta	filt_h0
+		sta	filt_h1
+		sta	filt_h2
+		sta	filt_h3
+		lda	#>(flt8580_h-1)
+		sta	filt_h0 + 1
+		sta	filt_h1 + 1
+		sta	filt_h2 + 1
+		sta	filt_h3 + 1
+
+snd_out:
+		ldx	#s_modevol - s_freqlo1
 so_loop:	lda	s_freqlo1,x
 		sta	SID_FREQLO1,x
 		dex
@@ -288,24 +362,28 @@ ss_filtertbl:
 ss_ftjmp:	beq	ss_ftdone
 		lda	fstep0,x
 		beq	ss_freadtbl
-ss_dofstep:	lda	filter_h-1,y
+filt_h0		= *+1
+ss_dofstep:	lda	$ffff,y
 		clc
 		adc	s_fchi
 		sta	s_fchi
 		dec	fstep0,x
 		beq	ss_ftnext
 		rts
-ss_freadtbl:	lda	filter_l-1,y
+filt_l0		= *+1
+ss_freadtbl:	lda	$ffff,y
 		beq	ss_setfilter
 		bpl	ss_filtermod
 		cmp	#$ff
 		bne	ss_filtercfg
-		lda	filter_h-1,y
+filt_h1		= *+1
+		lda	$ffff,y
 		tay
 		bcs	ss_ftjmp
 ss_filtermod:	sta	fstep0,x
 		bne	ss_dofstep
-ss_setfilter:	lda	filter_h-1,y
+filt_h2		= *+1
+ss_setfilter:	lda	$ffff,y
 		sta	s_fchi
 ss_ftnext:	iny
 ss_ftdone:	sty	ftpos0,x
@@ -316,7 +394,8 @@ ss_filtercfg:	and	#$70
 		and	#$f
 		ora	tmp
 		sta	s_modevol
-		lda	filter_h-1,y
+filt_h3		= *+1
+		lda	$ffff,y
 		sta	s_resflt
 		iny
 		bne	ss_freadtbl

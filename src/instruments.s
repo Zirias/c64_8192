@@ -10,8 +10,10 @@
 .export wave_h
 .export pulse_l
 .export pulse_h
-.export filter_l
-.export	filter_h
+.export flt8580_l
+.export	flt8580_h
+.export flt6581_l
+.export	flt6581_h
 
 .data
 
@@ -53,12 +55,12 @@ inst_pt:
 
 inst_ft:
 		.byte	$00
-		.byte	f_1 - filter_l+1
-		.byte	f_2 - filter_l+1
-		.byte	f_1 - filter_l+1
-		.byte	f_1 - filter_l+1
-		.byte	f_1 - filter_l+1
-		.byte	f_1 - filter_l+1
+		.byte	f_1 - flt8580_l+1
+		.byte	f_2 - flt8580_l+1
+		.byte	f_1 - flt8580_l+1
+		.byte	f_1 - flt8580_l+1
+		.byte	f_1 - flt8580_l+1
+		.byte	f_1 - flt8580_l+1
 
 inst_vdelay:
 		.byte	$0c
@@ -112,16 +114,24 @@ wave_h:
 		.byte	$fb,$00,$03,$fb,$00,$03,w_6 -wave_l+10
 
 pulse_l:
-p_2:		.byte	$8a,$20,$ff
+p_2:		.byte	$8c,$20,$ff
 
 pulse_h:
-		.byte	$00,$20,$00
+		.byte	$00,$18,$00
 
-filter_l:
-f_1:		.byte	$80,$ff
+flt8580_l:
+f_1:		.byte	$90,$00,$08,$ff
 f_2:		.byte	$90,$00,$08,$ff
 
-filter_h:
-		.byte	$00,$00
+flt8580_h:
+		.byte	$52,$60,$f8,$00
 		.byte	$22,$48,$f8,$00
+
+flt6581_l:
+		.byte	$90,$00,$08,$ff
+		.byte	$90,$00,$08,$ff
+
+flt6581_h:
+		.byte	$52,$80,$f8,$00
+		.byte	$22,$68,$f8,$00
 
