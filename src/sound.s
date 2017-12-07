@@ -1,4 +1,5 @@
 .include "sid.inc"
+.include "vic.inc"
 .include "pitches.inc"
 .include "instruments.inc"
 .include "tunes.inc"
@@ -112,26 +113,23 @@ si_zpinit:	sta	tune,x
 		lda	#$ff
 		sta	tune
 
-		ldx	#$18
-		lda	#$0
-si_clearsid:	sta	SID_FREQLO1,x
-		dex
-		bpl	si_clearsid
-		lda	#$02
-		sta	SID_FREQHI3
-		lda	#$30
+		lda	VIC_CTL1
+		and	#$7
+		sta	tmp
+si_waitbadline:	lda	VIC_RASTER
+		and	#$7
+		eor	tmp
+		bne	si_waitbadline
+		lda	#$ff
 		sta	SID_CR3
-		ldy	#$08
-		sty	tmp
-		ldx	#$0
-si_testloop:	lda	SID_OSC3
-		bpl	si_nopeak
-		dec	tmp
-		bmi	si_is8580
-si_nopeak:	dex
-		bne	si_testloop
-		dey
-		bne	si_testloop
+		sta	SID_FREQLO3
+		sta	SID_FREQHI3
+		lda	#$20
+		sta	SID_CR3
+		lda	SID_OSC3
+		lsr	a
+		cli
+		bcc	si_is8580
 
 		ldx	#$3
 dbg_6581:	lda	sm_6581,x
