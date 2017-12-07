@@ -60,10 +60,11 @@ steploop:	jsr	board_step
 		jsr	screen_draw
 		beq	steploop
 stepdone:	lda	validmove
-		beq	check_js
-		lda	#$1
+		bne	mainloop
+		lda	#$3
+		ldy	#$1
 		jsr	snd_fx
-		bpl	mainloop
+		bpl	check_js
 
 gameover:	ldx	#gameoverlen
 gotextloop:	lda	gameovertext-1,x

@@ -1,5 +1,6 @@
 .include "random.inc"
 .include "jscodes.inc"
+.include "sound.inc"
 
 .exportzp board
 .exportzp score
@@ -153,8 +154,13 @@ bs_steploop:	jsr	getidx
 		lda	#$0
 		ldx	fromidx
 		sta	board,x
-		inc	stepdone
+		lda	stepdone
 		bne	bs_stepnext
+		inc	stepdone
+		lda	#$1
+		ldy	#$0
+		jsr	snd_fx
+		bpl	bs_stepnext
 bs_checkcomb:	ldx	moverow
 		ldy	combined,x
 		cpy	movestep
@@ -170,10 +176,14 @@ bs_checkcomb:	ldx	moverow
 		ldx	toidx
 		inc	board,x
 		inc	stepdone
+		lda	#$2
+		tay
+		jsr	snd_fx
 		ldy	#$1
 		sty	scoreadd
 		dey
 		sty	scoreadd+1
+		ldx	toidx
 		ldy	board,x
 bs_rolloop:	asl	scoreadd
 		rol	scoreadd+1
@@ -185,20 +195,19 @@ bs_rolloop:	asl	scoreadd
 		lda	score+1
 		adc	scoreadd+1
 		sta	score+1
-		lda	score+2
-		adc	#$0
-		sta	score+2
-		lda	score+3
-		adc	#$0
-		sta	score+3
-		ldx	moverow
+		bcc	bs_scoredone
+		inc	score+2
+		bne	bs_scoredone
+		inc	score+3
+bs_scoredone:	ldx	moverow
 		lda	movestep
 		sta	combined,x
 bs_stepnext:	dec	movestep
 		bpl	bs_steploop
 		dec	moverow
-		bpl	bs_rowloop
-		lda	#$0
+		bmi	bs_stepdone
+		jmp	bs_rowloop
+bs_stepdone:	lda	#$0
 		cmp	stepdone
 		rts
 

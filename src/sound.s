@@ -117,16 +117,16 @@ si_zpinit:	sta	tune,x
 si_clearsid:	sta	SID_FREQLO1,x
 		dex
 		bpl	si_clearsid
-		sta	tmp
 		lda	#$02
 		sta	SID_FREQHI3
 		lda	#$30
 		sta	SID_CR3
-		ldy	#$10
+		ldy	#$08
+		sty	tmp
 		ldx	#$0
 si_testloop:	lda	SID_OSC3
 		bpl	si_nopeak
-		inc	tmp
+		dec	tmp
 		bmi	si_is8580
 si_nopeak:	dex
 		bne	si_testloop
@@ -475,13 +475,22 @@ ss_nextpat:
 		jmp	ss_hr_offsteps
 
 snd_fx:
-		ldx	sfxfront
-		dex
+		dey
+		bpl	sfx_insert
+		ldy	sfxcurr
+		bne	sfx_done
+sfx_insert:	ldx	sfxfront
+		dey
+		bmi	sfx_noforce
+		stx	sfxback
+		ldy	#$0
+		sty	sfxcurr
+sfx_noforce:	dex
 		bpl	sfx_idxok
 		ldx	#$7
 sfx_idxok:	sta	sfxq,x
 		stx	sfxfront
-		rts
+sfx_done:	rts
 
 snd_step:
 		lda	sfxcurr
@@ -607,7 +616,8 @@ sfx_nohr:	ldx	wtpos2
 		sta	pitch2
 		ldx	#$e
 		jmp	ss_setpitch
-sfx_step:	ldy	wtpos2
+sfx_step:	ldx	#$e
+		ldy	wtpos2
 		lda	wave_l-1,y
 		cmp	#$ff
 		bne	sfx_dowave
@@ -620,6 +630,8 @@ sfx_dowave:	sta	s_cr3
 		lda	wave_h-1,y
 		beq	sfx_wavedone
 		bpl	sfx_pitchplus
+		cmp	#$c8
+		bcc	sfx_abspitch
 		dec	tmp
 sfx_pitchplus:	clc
 		adc	s_freqlo3
@@ -627,8 +639,9 @@ sfx_pitchplus:	clc
 		lda	s_freqhi3
 		adc	tmp
 		sta	s_freqhi3
+		bcc	sfx_wavedone
+sfx_abspitch:	jsr	ss_setpitch
 sfx_wavedone:	inc	wtpos2
-		ldx	#$e
 		jsr	ss_pulsetbl
 		jsr	ss_filtertbl
 		rts
