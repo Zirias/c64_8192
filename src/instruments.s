@@ -162,8 +162,8 @@ flt6581_l:
 		.byte	$90,$00,$08,$ff
 
 flt6581_h:
-		.byte	$52,$7b,$f9,$00
-		.byte	$22,$64,$f9,$00
+		.byte	$52,$9c,$fa,$00
+		.byte	$22,$7c,$fa,$00
 
 sfx_ad:
 		.byte	$a2
