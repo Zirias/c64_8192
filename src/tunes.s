@@ -28,20 +28,29 @@ tune_ingame:
 		.byte	$00,$01,$06,$00
 		.byte	$00,$04,$07,$00
 		.byte	$00,$05,$0d,$00
-
 		.byte	$00,$09,$0a,$00
 		.byte	$00,$0b,$0c,$00
+
+		.byte	$00,$01,$03,$00
+		.byte	$00,$01,$06,$00
+		.byte	$00,$04,$07,$00
+		.byte	$00,$05,$0d,$00
+		.byte	$00,$09,$0a,$00
+		.byte	$00,$0b,$0c,$00
+		.byte	$00,$0e,$0f,$00
+		.byte	$00,$10,$11,$00
+
 		.byte	$80,$05
 
 patterns_l:
 		.byte	<pat1, <pat2, <pat3, <pat4, <pat5, <pat6
 		.byte	<pat7, <pat8, <pat9, <pata, <patb, <patc
-		.byte	<patd
+		.byte	<patd, <pate, <patf, <pat10, <pat11
 
 patterns_h:
 		.byte	>pat1, >pat2, >pat3, >pat4, >pat5, >pat6
 		.byte	>pat7, >pat8, >pat9, >pata, >patb, >patc
-		.byte	>patd
+		.byte	>patd, >pate, >patf, >pat10, >pat11
 
 pat1:
 		.byte	$01,PT_C3
@@ -543,3 +552,156 @@ patd:		.byte	$03,PT_C1
 		.byte	$00
 		.byte	$00
 		.byte	$ff
+
+pate:		.byte	$09,PT_C4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$09,PT_BF3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0a,PT_C3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$ff
+
+patf:		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_F0
+		.byte	$00
+		.byte	$03,PT_AF0
+		.byte	$00
+		.byte	$03,PT_G0
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_C1
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$ff
+
+pat10:		.byte	$09,PT_BF3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0a,PT_DF3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0a,PT_C3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$01,PT_E3
+		.byte	$c0
+		.byte	$01,PT_C3
+		.byte	$00
+		.byte	$01,PT_B2
+		.byte	$00
+		.byte	$80,PT_C3
+		.byte	$c0
+		.byte	$01,PT_D3
+		.byte	$c0
+		.byte	$ff
+
+pat11:		.byte	$03,PT_BF0
+		.byte	$00
+		.byte	$02,PT_BF3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$08,PT_BF3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_F0
+		.byte	$00
+		.byte	$03,PT_AF0
+		.byte	$00
+		.byte	$03,PT_G0
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$04,PT_C3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_G1
+		.byte	$00
+		.byte	$04,PT_G3
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$ff
+

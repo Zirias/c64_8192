@@ -34,6 +34,8 @@ inst_ad:
 		.byte	$00
 		.byte	$06
 		.byte	$06
+		.byte	$13
+		.byte	$13
 
 inst_sr:
 		.byte	$a9
@@ -44,6 +46,8 @@ inst_sr:
 		.byte	$6a
 		.byte	$6c
 		.byte	$6c
+		.byte	$ac
+		.byte	$ac
 
 inst_wt:
 		.byte	w_1 - wave_l+1
@@ -54,6 +58,8 @@ inst_wt:
 		.byte	w_6 - wave_l+1
 		.byte	w_4 - wave_l+1
 		.byte	w_5 - wave_l+1
+		.byte	w_a - wave_l+1
+		.byte	w_b - wave_l+1
 
 inst_pt:
 		.byte	$00
@@ -64,6 +70,8 @@ inst_pt:
 		.byte	p_2 - pulse_l+1
 		.byte	p_2 - pulse_l+1
 		.byte	p_2 - pulse_l+1
+		.byte	$00
+		.byte	$00
 
 inst_ft:
 		.byte	$00
@@ -74,9 +82,13 @@ inst_ft:
 		.byte	f_1 - flt8580_l+1
 		.byte	f_1 - flt8580_l+1
 		.byte	f_1 - flt8580_l+1
+		.byte	$00
+		.byte	$00
 
 inst_vdelay:
 		.byte	$0c
+		.byte	$00
+		.byte	$00
 		.byte	$00
 		.byte	$00
 		.byte	$00
@@ -94,9 +106,13 @@ inst_vcount:
 		.byte	$00
 		.byte	$00
 		.byte	$00
+		.byte	$00
+		.byte	$00
 
 inst_voff:
 		.byte	$12
+		.byte	$00
+		.byte	$00
 		.byte	$00
 		.byte	$00
 		.byte	$00
@@ -121,6 +137,10 @@ w_8:		.byte	$41,$41,$41,$41,$40,$40
 		.byte	$40,$40,$40,$40,$40,$40,$ff
 w_9:		.byte	$41,$41,$41,$41,$41,$41
 		.byte	$40,$ff
+w_a:		.byte	$11,$11,$11,$11,$11,$11
+		.byte	$11,$11,$11,$10,$10,$10,$ff
+w_b:		.byte	$11,$11,$11,$11,$11,$11
+		.byte	$11,$11,$11,$10,$10,$10,$ff
 
 wave_h:
 		.byte	$00,$00
@@ -138,6 +158,10 @@ wave_h:
 		.byte	$00,$00,$00,$00,$00,$00,$00
 		.byte	$00,$00,$00,$00,$00,$00
 		.byte	$00,$00
+		.byte	$f7,$fb,$00,$f7,$fb,$00
+		.byte	$f7,$fb,$00,$f7,$fb,$00,w_a -wave_l+10
+		.byte	$00,$04,$07,$00,$04,$07
+		.byte	$00,$04,$07,$00,$04,$07,w_b -wave_l+10
 
 pulse_l:
 p_2:		.byte	$8c,$20,$ff
