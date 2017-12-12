@@ -1,25 +1,28 @@
 .include "vicconfig.inc"
-.include "zp.inc"
 
 .export charset_init
 .export charset_done
+
+.zeropage
+
+tempptr:	.res	2
 
 .code
 
 charset_init:
 		lda	#$00
 		tay
-		sta	TMPW0
+		sta	tempptr
 		lda	#>vic_charset
-		sta	TMPW0+1
+		sta	tempptr+1
 		lda	#$31
 		sta	$1
 		ldx	#$08
-cpcharset:	lda	(TMPW0),y
-		sta	(TMPW0),y
+cpcharset:	lda	(tempptr),y
+		sta	(tempptr),y
 		iny
 		bne	cpcharset
-		inc	TMPW0+1
+		inc	tempptr+1
 		dex
 		bne	cpcharset
 

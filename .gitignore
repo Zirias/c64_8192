@@ -4,6 +4,6 @@ obj/
 *.lbl
 *.map
 *.prg
-*.prg_*
+*.bin
 *.d64
 

@@ -1,4 +1,3 @@
-.include "zp.inc"
 .include "irq.inc"
 .include "charset.inc"
 .include "random.inc"
@@ -15,8 +14,6 @@ validmove:	.res	1
 
 .segment "MAIN"
 
-		sei
-		jsr	zp_init
 		jsr	rnd_init
 		jsr	charset_init
 		jsr	board_init

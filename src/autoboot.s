@@ -1,5 +1,10 @@
+.include "diskio.inc"
+.include "zp.inc"
+
 CHROUT          = $ffd2
 READY           = $a474
+
+.import __MAIN_LOAD__
 
 .segment "BOOT"
 
@@ -74,7 +79,7 @@ loader:
                 .assert *=$086a, error  ; check linker placed us correctly
                 lda     #$f1
                 cmp     $327
-                beq     maincode            ; no autostart
+                beq     chainload            ; no autostart
 
                 ; repair CHROUT vector
                 sta     $327
@@ -104,10 +109,23 @@ ld_hdrcopyloop: lda     ab_basichdr-1,x
                 dex
                 bne     ld_hdrcopyloop
 
-maincode:
+chainload:
+		jsr	dio_init
+		sei
+		jsr	zp_init
+		lda	#<filename
+		ldy	#>filename
+		jsr	dio_setname
+		lda	#<__MAIN_LOAD__
+		ldy	#>__MAIN_LOAD__
+		jsr	dio_load
+		jmp	__MAIN_LOAD__
 
-.data
+
+.segment "COREDATA"
 
 ld_done:	.byte	" done.", $0d
 ld_donelen	= *-ld_done
+
+filename:	.byte	"8192main", $00
 
