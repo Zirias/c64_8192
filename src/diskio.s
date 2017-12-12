@@ -1,10 +1,12 @@
 .include "kernal.inc"
 .include "cia.inc"
 .include "via.inc"
+.include "decr.inc"
 
 .export dio_init
 .export dio_setname
 .export dio_load
+.export get_crunched_byte
 
 .import __DRVCODE_LOAD__
 .import __DRVCODE_RUN__
@@ -20,7 +22,6 @@ temp3:		.res	1
 stackptrstore:	.res	1
 nameptr:	.res	2
 namelength:	.res	1
-dataptr:	.res	2
 
 .bss
 
@@ -156,9 +157,18 @@ dg_bitloop:	nop
 		bne	dg_bitloop
 		rts
 
+get_crunched_byte:
+		php
+		stx	gcb_savex
+		jsr	dio_getbyte
+gcb_savex	= *+1
+		ldx	#$ff
+		plp
+		rts
+
 dio_load:
-		sta	dataptr
-		sty	dataptr+1
+		sta	zp_dest_lo
+		sty	zp_dest_hi
 		tsx
 		stx	stackptrstore
 		lda	namelength
@@ -175,12 +185,7 @@ dl_delay:	dex
 		bne	dl_delay
 		lda	#$0
 		sta	temp2
-		tay
-dl_loop:	jsr	dio_getbyte
-		sta	(dataptr),y
-		iny
-		bne	dl_loop
-		inc	dataptr+1
+dl_loop:	jsr	decrunch
 		bne	dl_loop
 
 .segment "COREDATA"
