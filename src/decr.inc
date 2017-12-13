@@ -1,5 +1,4 @@
-.import decrunch
-.importzp zp_dest_lo
-.importzp zp_dest_hi
+.import init_decruncher
+.import get_decrunched_byte
 
 ; vim: ft=asm:et:si:ts=8:sts=8:sw=8

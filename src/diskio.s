@@ -19,9 +19,11 @@ drvcode_chunk	= $20
 temp1:		.res	1
 temp2:		.res	1
 temp3:		.res	1
+temp4:		.res	1
 stackptrstore:	.res	1
 nameptr:	.res	2
 namelength:	.res	1
+dataptr:	.res	2
 
 .bss
 
@@ -167,8 +169,8 @@ gcb_savex	= *+1
 		rts
 
 dio_load:
-		sta	zp_dest_lo
-		sty	zp_dest_hi
+		sta	dataptr
+		sty	dataptr+1
 		tsx
 		stx	stackptrstore
 		lda	namelength
@@ -185,8 +187,18 @@ dl_delay:	dex
 		bne	dl_delay
 		lda	#$0
 		sta	temp2
-dl_loop:	jsr	decrunch
+		sta	temp4
+		jsr	init_decruncher
+dl_loop:	jsr	get_decrunched_byte
+		bcs	dl_endload
+		ldy	temp4
+		sta	(dataptr),y
+		inc	temp4
 		bne	dl_loop
+		inc	dataptr+1
+		bne	dl_loop
+dl_endload:	jsr	dio_getbyte
+		bcc	dl_endload
 
 .segment "COREDATA"
 

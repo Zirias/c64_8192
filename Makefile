@@ -28,7 +28,7 @@ $(8192_PRG): $(8192_BOOTBINS)
 	cat >$@ $^
 
 $(8192_MAIN): $(8192_MAINBINS)
-	$(EXO) raw -c -o$@ $<
+	$(EXO) raw -c -m 2048 -o$@ $<
 
 $(8192_BINS): $(8192_OBJS)
 	$(C64LD) -o8192 $(C64LDFLAGS) $^
