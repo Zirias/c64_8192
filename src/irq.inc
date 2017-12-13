@@ -1,3 +1,4 @@
+.import irq_early_init
 .import irq_init
 .import irq_done
 

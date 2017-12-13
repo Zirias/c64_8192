@@ -7,6 +7,10 @@ EXO?=exomizer
 C64ASFLAGS?=-t $(C64SYS) -g
 C64LDFLAGS?=-Ln 8192.lbl -m 8192.map -Csrc/8192.cfg
 
+ifdef DEBUG
+C64ASFLAGS+=-DDEBUG
+endif
+
 8192_OBJS:=$(addprefix obj/,autoboot.o diskio.o decr.o zp.o charset.o irq.o \
 	random.o numconv.o jsinput.o pitches.o instruments.o tunes.o \
 	sound.o screen.o board.o main.o)

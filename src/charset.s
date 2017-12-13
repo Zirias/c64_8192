@@ -52,7 +52,7 @@ combnums_loop:	lda	combnums-1,x
 		dex
 		bne	combnums_loop
 
-		lda	#$37
+		lda	#$35
 		sta	$1
 		rts
 

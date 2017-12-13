@@ -1,4 +1,5 @@
 .include "diskio.inc"
+.include "irq.inc"
 .include "zp.inc"
 
 CHROUT          = $ffd2
@@ -113,6 +114,8 @@ chainload:
 		jsr	dio_init
 		sei
 		jsr	zp_init
+		jsr	irq_early_init
+		cli
 		lda	#<filename
 		ldy	#>filename
 		jsr	dio_setname

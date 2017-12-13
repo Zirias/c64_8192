@@ -14,6 +14,7 @@ validmove:	.res	1
 
 .segment "MAIN"
 
+		sei
 		jsr	rnd_init
 		jsr	charset_init
 		jsr	board_init
