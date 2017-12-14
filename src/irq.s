@@ -117,15 +117,12 @@ ei_curt_off:	stx	x_save
 ei_wait:	dex
 		bne	ei_wait
 		ldx	x_save
-		nop
-		nop
-		nop
-bordercol	= *+1
-		lda	#$ff
-		sta	BORDER_COLOR
 vctl2		= *+1
 		lda	#$ff
 		sta	VIC_CTL2
+bordercol	= *+1
+		lda	#$ff
+		sta	BORDER_COLOR
 vctl1		= *+1
 		lda	#$ff
 		sta	VIC_CTL1
