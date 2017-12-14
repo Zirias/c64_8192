@@ -4,7 +4,7 @@ obj/
 *.lbl
 *.map
 *.prg
-*.bin
+/*.bin
 *.exo
 *.d64
 
