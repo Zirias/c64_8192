@@ -18,8 +18,6 @@ accu_save:	.res	1
 x_save:		.res	1
 y_save:		.res	1
 framephase:	.res	1
-bgcol:		.res	1
-bordercol:	.res	1
 curtainpos	= framephase
 curtaintoggle	= y_save
 
@@ -40,7 +38,8 @@ irq_early_init:
 		sta	$fffa
 		lda	#>ei_end
 		sta	$fffb
-		lda	#$00
+		lda	#$0
+		sta	SPRITE_SHOW   ; disable all sprites here
 		sta	CIA2_CRA
 		sta	CIA2_TA_LO
 		sta	CIA2_TA_HI
@@ -56,8 +55,10 @@ irq_early_init:
 
 		lda	BORDER_COLOR
 		sta	bordercol
-		lda	BG_COLOR_0
-		sta	bgcol
+		lda	VIC_CTL1
+		sta	vctl1
+		lda	VIC_CTL2
+		sta	vctl2
 		lda	#$5
 		sta	curtainpos
 		lda	#$1
@@ -79,16 +80,17 @@ setraster:
 		lda	VIC_CTL1
 		and	#$7f
 		bpl	sr_store
-sr_curt_on:	lda	curtainpos
+sr_curt_on:	lda	VIC_CTL1
+		ora	#$80
+		sta	VIC_CTL1
+		lda	curtainpos
 		asl	a
 		sta	VIC_RASTER
+		bcs	sr_done
 		lda	VIC_CTL1
-		bcs	sr_highbit
 		and	#$7f
-		bpl	sr_store
-sr_highbit:	ora	#$80
 sr_store:	sta	VIC_CTL1
-		rts
+sr_done:	rts
 
 earlyisr:
 		sta	accu_save
@@ -98,7 +100,12 @@ earlyisr:
 		beq	ei_curt_off
 		lda	#$0
 		sta	BORDER_COLOR
-		sta	BG_COLOR_0
+		lda	VIC_CTL1
+		ora	#$40
+		sta	VIC_CTL1
+		lda	VIC_CTL2
+		ora	#$10
+		sta	VIC_CTL2
 		lda	curtainpos
 		cmp	#$9a
 		bcc	ei_bottom
@@ -106,15 +113,22 @@ earlyisr:
 		sta	VIC_IRM
 		beq	ei_out
 ei_curt_off:	stx	x_save
-		ldx	#$5
+		ldx	#$4
 ei_wait:	dex
 		bne	ei_wait
-		nop
 		ldx	x_save
-		lda	bordercol
+		nop
+		nop
+		nop
+bordercol	= *+1
+		lda	#$ff
 		sta	BORDER_COLOR
-		lda	bgcol
-		sta	BG_COLOR_0
+vctl2		= *+1
+		lda	#$ff
+		sta	VIC_CTL2
+vctl1		= *+1
+		lda	#$ff
+		sta	VIC_CTL1
 		inc	curtainpos
 ei_bottom:	jsr	setraster
 ei_out:		lda	accu_save
@@ -145,8 +159,11 @@ irq_init:
 		lda	#$f2
 		sta	VIC_RASTER
 		lda	VIC_CTL1
-		and	#$7f
+		and	#$3f
 		sta	VIC_CTL1
+		lda	VIC_CTL2
+		and	#$ef
+		sta	VIC_CTL2
 		lda	#$01
 		sta	VIC_IRM
 		sta	VIC_IRR
