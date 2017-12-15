@@ -8,6 +8,10 @@ Current version: **0.1 alpha**
 
 Download (D64 disk image): [8192-0.1a.d64](/../disks/8192-0.1a.d64?raw=true)
 
+Current DEBUG build, possibly unstable:
+[8192_DEBUG-curr.d64](/../disks/8192_DEBUG-curr.d64?raw=true). This one will
+be updated from time to time without renaming.
+
 Screenshot:
 
 ![8192 01a](/../disks/screenshots/8192_01a.png?raw=true
