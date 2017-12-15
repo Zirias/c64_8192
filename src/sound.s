@@ -134,11 +134,13 @@ si_waitbadline:	lda	VIC_RASTER
 		bcc	si_is8580
 
 .ifdef DEBUG
+		dec	$01
 		ldx	#$3
 dbg_6581:	lda	sm_6581,x
-		sta	vic_colram+$94,x
+		sta	vic_screenram+$94,x
 		dex
 		bpl	dbg_6581
+		inc	$01
 .endif
 
 		lda	#<(flt6581_l-1)
@@ -158,11 +160,13 @@ dbg_6581:	lda	sm_6581,x
 		bne	snd_out
 si_is8580:
 .ifdef DEBUG
+		dec	$01
 		ldx	#$3
 dbg_8580:	lda	sm_8580,x
-		sta	vic_colram+$94,x
+		sta	vic_screenram+$94,x
 		dex
 		bpl	dbg_8580
+		inc	$01
 .endif
 
 		lda	#<(flt8580_l-1)

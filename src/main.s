@@ -66,11 +66,15 @@ stepdone:	lda	validmove
 		jsr	snd_fx
 		bpl	check_js
 
-gameover:	ldx	#gameoverlen
+gameover:	sei
+		dec	$01
+		ldx	#gameoverlen
 gotextloop:	lda	gameovertext-1,x
-		sta	vic_colram+$93,x
+		sta	vic_screenram+$93,x
 		dex
 		bne	gotextloop
+		inc	$01
+		cli
 end:		beq	end
 
 
