@@ -75,7 +75,7 @@ gotextloop:	lda	gameovertext-1,x
 		bne	gotextloop
 		inc	$01
 		cli
-end:		beq	end
+end:		bne	end
 
 
 .data
