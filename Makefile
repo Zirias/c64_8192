@@ -51,7 +51,7 @@ clean:
 	rm -fr obj *.lbl *.map *.bin
 
 distclean: clean
-	rm -f $(8192_DISK) *.prg *.exo
+	rm -f $(8192_DISK) *.prg *.exa *.exo
 
 .PHONY: all clean distclean
 
