@@ -26,7 +26,9 @@ drawreq:	.res	1
 .code
 
 screen_init:
-		lda	#>vic_colram
+		dec	$01
+
+		lda	#>vic_screenram
 		sta	drawptr0+1		
 		lda	#$20
 		ldy	#$1
@@ -43,11 +45,11 @@ clearloop:	sta	(drawptr0),y
 		dex
 		bne	clearloop
 		ldy	#$e8
-clearloop2:	sta	vic_colram + $2ff, y
+clearloop2:	sta	vic_screenram + $2ff, y
 		dey
 		bne	clearloop2
 
-		lda	#>vic_colram
+		lda	#>vic_screenram
 		sta	drawptr0+1
 		lda	#$04
 		sta	boardrow
@@ -105,44 +107,45 @@ row2_nocarry:	dec	boardrow
 		
 		lda	#$a0
 		ldx	#$4e
-lowerboxloop1:	sta	vic_colram+$370,x
+lowerboxloop1:	sta	vic_screenram+$370,x
 		dex
 		bne	lowerboxloop1
 		lda	#$e3
 		ldx	#$26
-lowerboxloop2:	sta	vic_colram+$348,x
+lowerboxloop2:	sta	vic_screenram+$348,x
 		eor	#$7
-		sta	vic_colram+$3c0,x
+		sta	vic_screenram+$3c0,x
 		eor	#$7
 		dex
 		bne	lowerboxloop2
 		lda	#$e5
-		sta	vic_colram+$370
-		sta	vic_colram+$398
+		sta	vic_screenram+$370
+		sta	vic_screenram+$398
 		lda	#$e7
-		sta	vic_colram+$397
-		sta	vic_colram+$3bf
+		sta	vic_screenram+$397
+		sta	vic_screenram+$3bf
 		ldy	#$5b
-		sty	vic_colram+$348
+		sty	vic_screenram+$348
 		iny
-		sty	vic_colram+$36f
+		sty	vic_screenram+$36f
 		iny
-		sty	vic_colram+$3e7
+		sty	vic_screenram+$3e7
 		iny
-		sty	vic_colram+$3c0
+		sty	vic_screenram+$3c0
 
 		ldx	#scorestrlen
 scorelbl:	lda	scorestr-1,x
-		sta	vic_colram+$374,x
+		sta	vic_screenram+$374,x
 		dex
 		bne	scorelbl
 
 		ldx	#highscorestrlen
 highscorelbl:	lda	highscorestr-1,x
-		sta	vic_colram+$387,x
+		sta	vic_screenram+$387,x
 		dex
 		bne	highscorelbl
 
+		inc	$01
 		ldx	#$a0
 		lda	#$d
 lowerboxcol:	sta	$d800+$347,x
@@ -176,12 +179,14 @@ screen_refresh:
 sr_score:	lda	drawreq
 		and	#DRAWREQ_SCORE
 		beq	sr_appear
+		dec	$01
 		ldx	#NUMSTRSIZE
 copyscorestr:	lda	nc_string-1,x
 		ora	#$80
-		sta	vic_colram+$39c,x
+		sta	vic_screenram+$39c,x
 		dex
 		bne	copyscorestr
+		inc	$01
 
 sr_appear:	lda	drawreq
 		and	#DRAWREQ_APPEAR
@@ -239,12 +244,14 @@ sr_fillcenter:	sta	(drawptr1),y
 		sta	tilecol
 		ldy	screencol
 		iny
+		dec	$01
 sr_appcap:	lda	tilestrings,x
 		sta	(drawptr0),y
 		iny
 		inx
 		dec	tilecol
 		bne	sr_appcap
+		inc	$01
 			
 sr_done:	lda	#$0
 		sta	drawreq
@@ -280,6 +287,7 @@ sr_filltile:	sta	(drawptr0),y
 		dec	boardrow
 		bpl	sr_boardloop
 
+		dec	$01
 		inc	boardrow
 captloop:	ldy	boardrow
 		lda	screenrowl2,y
@@ -311,6 +319,7 @@ captoutloop:	lda	tilestrings,x
 		inc	boardrow
 		cpx	#$10
 		bne	captloop
+		inc	$01
 		rts
 
 sr_rowpointers:
@@ -366,8 +375,8 @@ screenrowl4:	.byte	$a0, $68, $30, $f8
 colrowh0_1:	.byte	$d8, $d8, $d9, $da
 colrowh2:	.byte	$d8, $d9, $d9, $da
 colrowh3_4:	.byte	$d8, $d9, $da, $da
-captrow:	.byte	>vic_colram, (>vic_colram)+1
-		.byte	(>vic_colram)+1, (>vic_colram)+2
+captrow:	.byte	>vic_screenram, (>vic_screenram)+1
+		.byte	(>vic_screenram)+1, (>vic_screenram)+2
 
 scorestr:	revchr "Score:"
 scorestrlen	= *-scorestr

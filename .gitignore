@@ -1,4 +1,5 @@
 obj/
+multipaint/*.txt
 .*.swp
 *~
 *.lbl
@@ -6,5 +7,6 @@ obj/
 *.prg
 /*.bin
 *.exo
+*.exa
 *.d64
 

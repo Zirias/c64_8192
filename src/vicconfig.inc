@@ -7,8 +7,11 @@ vic_bank = $c0
 ; start page of character set in vic AS
 vic_charpage = $18
 
-; start page of screen or color memory in vic AS
-vic_colpage = $3c
+; start page of color memory in vic AS
+vic_colpage = $1c
+
+; start page of screen memory in vic AS
+vic_screenpage = $14
 
 ; start page for spriteset in vic AS
 vic_sprite_base = $1a
@@ -27,13 +30,16 @@ vic_bankselect_and = $fc + (~(vic_bank >> 6) & $3)
 vic_memctl_hires = (vic_colpage << 2) + 9
 
 ; MEM_CTL value for text mode
-vic_memctl_text = (vic_colpage << 2) & $f0 + (vic_charpage >> 2) & $0e + 1
+vic_memctl_text = (vic_screenpage << 2) & $f0 | (vic_charpage >> 2) & $0e | 1
 
 ; start address of character set in 6510 AS
 vic_charset = (vic_bank + vic_charpage) << 8
 
 ; start address of screen / color ram in 6510 AS
 vic_colram = (vic_bank + vic_colpage) << 8
+
+; start address of screen / color ram in 6510 AS
+vic_screenram = (vic_bank + vic_screenpage) << 8
 
 ; start address of bitmap data in 6510 AS
 vic_bitmap = (vic_bank + $20) << 8

@@ -5,7 +5,8 @@
 
 .export dio_init
 .export dio_setname
-.export dio_load
+.export dio_loadarchive
+.export dio_endloadarchive
 .export get_crunched_byte
 
 .import __DRVCODE_LOAD__
@@ -24,6 +25,7 @@ stackptrstore:	.res	1
 nameptr:	.res	2
 namelength:	.res	1
 dataptr:	.res	2
+newfile:	.res	1
 
 .bss
 
@@ -92,6 +94,7 @@ ds_scan:	lda	(nameptr),y
 		iny
 		bne	ds_scan
 ds_done:	sty	namelength
+		sty	newfile
 		rts
 
 dio_sendbyte:
@@ -168,11 +171,11 @@ gcb_savex	= *+1
 		plp
 		rts
 
-dio_load:
+dio_loadarchive:
 		sta	dataptr
 		sty	dataptr+1
-		tsx
-		stx	stackptrstore
+		ldx	newfile
+		beq	dl_nextchunk
 		lda	namelength
 		jsr	dio_sendbyte
 		ldy	namelength
@@ -185,20 +188,27 @@ dl_namedone:	lda	#$1
 		jsr	dio_sendbyte
 dl_delay:	dex
 		bne	dl_delay
-		lda	#$0
-		sta	temp2
-		sta	temp4
+		stx	newfile
+		stx	temp2
+dl_nextchunk:	stx	temp4
 		jsr	init_decruncher
 dl_loop:	jsr	get_decrunched_byte
 		bcs	dl_endload
 		ldy	temp4
+		dec	$01
 		sta	(dataptr),y
+		inc	$01
 		inc	temp4
 		bne	dl_loop
 		inc	dataptr+1
 		bne	dl_loop
-dl_endload:	jsr	dio_getbyte
-		bcc	dl_endload
+dl_endload:	rts
+
+dio_endloadarchive:
+		tsx
+		stx	stackptrstore
+dle_loop:	jsr	dio_getbyte
+		bcc	dle_loop
 
 .segment "COREDATA"
 

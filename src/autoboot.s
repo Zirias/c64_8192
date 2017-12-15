@@ -6,6 +6,7 @@ CHROUT          = $ffd2
 READY           = $a474
 
 .import __MAIN_LOAD__
+.import __TCOL_LOAD__
 
 .segment "BOOT"
 
@@ -119,9 +120,13 @@ chainload:
 		lda	#<filename
 		ldy	#>filename
 		jsr	dio_setname
+		lda	#<__TCOL_LOAD__
+		ldy	#>__TCOL_LOAD__
+		jsr	dio_loadarchive
 		lda	#<__MAIN_LOAD__
 		ldy	#>__MAIN_LOAD__
-		jsr	dio_load
+		jsr	dio_loadarchive
+		jsr	dio_endloadarchive
 		jmp	__MAIN_LOAD__
 
 

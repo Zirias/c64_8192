@@ -17,6 +17,7 @@ memctl_save:	.res	1
 accu_save:	.res	1
 x_save:		.res	1
 y_save:		.res	1
+bank_save:	.res	1
 framephase:	.res	1
 curtainpos	= framephase
 curtaintoggle	= y_save
@@ -94,11 +95,15 @@ sr_done:	rts
 
 earlyisr:
 		sta	accu_save
+		lda	$01
+		sta	bank_save
+		lda	#$35
+		sta	$01
 		lda	#$ff
 		sta	VIC_IRR
 		lda	curtaintoggle
 		beq	ei_curt_off
-		lda	#$0
+ei_curt_on:	lda	#$0
 		sta	BORDER_COLOR
 		lda	VIC_CTL1
 		ora	#$40
@@ -113,22 +118,25 @@ earlyisr:
 		sta	VIC_IRM
 		beq	ei_out
 ei_curt_off:	stx	x_save
-		ldx	#$4
+		ldx	#$2
 ei_wait:	dex
 		bne	ei_wait
-		ldx	x_save
+		nop
 vctl2		= *+1
 		lda	#$ff
 		sta	VIC_CTL2
-bordercol	= *+1
-		lda	#$ff
-		sta	BORDER_COLOR
 vctl1		= *+1
 		lda	#$ff
 		sta	VIC_CTL1
+bordercol	= *+1
+		lda	#$ff
+		sta	BORDER_COLOR
 		inc	curtainpos
+		ldx	x_save
 ei_bottom:	jsr	setraster
-ei_out:		lda	accu_save
+ei_out:		lda	bank_save
+		sta	$01
+		lda	accu_save
 ei_end:		rti
 
 .code
@@ -137,12 +145,6 @@ irq_init:
 		;lda	#FRAMESKIP
 		sta	framephase
 
-		; VIC memory configuration
-		lda	CIA2_PRA
-		and	#vic_bankselect_and
-		sta	CIA2_PRA
-		lda	VIC_MEMCTL
-		sta	memctl_save
 		lda	#vic_memctl_text
 		sta	VIC_MEMCTL
 
@@ -155,11 +157,9 @@ irq_init:
 		; configure VIC IRQ
 		lda	#$f2
 		sta	VIC_RASTER
-		lda	VIC_CTL1
-		and	#$3f
+		lda	#$1b
 		sta	VIC_CTL1
-		lda	VIC_CTL2
-		and	#$ef
+		lda	#$08
 		sta	VIC_CTL2
 		lda	#$01
 		sta	VIC_IRM

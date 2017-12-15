@@ -7,6 +7,7 @@
 .include "vicconfig.inc"
 .include "charconv.inc"
 .include "sound.inc"
+.include "title.inc"
 
 .zeropage
 
@@ -14,6 +15,7 @@ validmove:	.res	1
 
 .segment "MAIN"
 
+		jsr	title_show
 		sei
 		jsr	rnd_init
 		jsr	charset_init
