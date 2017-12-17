@@ -4,12 +4,16 @@
 .include "jsinput.inc"
 .include "screen.inc"
 .include "sound.inc"
+.include "title.inc"
 
 .export irq_early_init
 .export irq_init
 .export irq_done
 
 FRAMESKIP	= 1
+
+OP_BEQ		= $F0
+OP_BNE		= $D0
 
 .zeropage
 
@@ -65,6 +69,13 @@ irq_early_init:
 		lda	#$1
 		sta	curtaintoggle
 
+		lda	#OP_BEQ
+		sta	ei_on_off
+		lda	#<title_show
+		sta	ei_donejmp
+		lda	#>title_show
+		sta	ei_donejmp+1
+
 		; configure VIC IRQ
 		jsr	setraster
 		lda	#$01
@@ -93,6 +104,11 @@ sr_curt_on:	lda	VIC_CTL1
 sr_store:	sta	VIC_CTL1
 sr_done:	rts
 
+eisr_wait:
+		nop
+		nop
+		rts
+
 earlyisr:
 		sta	accu_save
 		lda	$01
@@ -101,44 +117,84 @@ earlyisr:
 		sta	$01
 		lda	#$ff
 		sta	VIC_IRR
+		jsr	eisr_wait
 		lda	curtaintoggle
-		beq	ei_curt_off
-ei_curt_on:	lda	#$0
-		sta	BORDER_COLOR
-		lda	VIC_CTL1
-		ora	#$40
-		sta	VIC_CTL1
-		lda	VIC_CTL2
-		ora	#$10
+ei_on_off:	beq	ei_curt_off
+ei_curt_on:	lda	#$d8
 		sta	VIC_CTL2
+		lda	#$5b
+		sta	VIC_CTL1
+		lda	#$0
+		sta	BORDER_COLOR
 		lda	curtainpos
 		cmp	#$9a
 		bcc	ei_bottom
-		lda	#$0
-		sta	VIC_IRM
-		beq	ei_out
-ei_curt_off:	stx	x_save
-		ldx	#$2
-ei_wait:	dex
-		bne	ei_wait
-		nop
+ei_donejmp	= *+1
+		jmp	$ffff
+ei_curt_off:
 vctl2		= *+1
 		lda	#$ff
 		sta	VIC_CTL2
-vctl1		= *+1
-		lda	#$ff
-		sta	VIC_CTL1
 bordercol	= *+1
 		lda	#$ff
 		sta	BORDER_COLOR
+vctl1		= *+1
+		lda	#$ff
+		sta	VIC_CTL1
 		inc	curtainpos
-		ldx	x_save
 ei_bottom:	jsr	setraster
 ei_out:		lda	bank_save
 		sta	$01
 		lda	accu_save
 ei_end:		rti
 
+.segment "TCODE"
+
+title_show:
+		; VIC memory configuration
+		lda	CIA2_PRA
+		and	#vic_bankselect_and
+		sta	CIA2_PRA
+		lda	VIC_MEMCTL
+		lda	#vic_memctl_hires
+		sta	VIC_MEMCTL
+
+		lda	#OP_BNE
+		sta	ei_on_off
+		lda	#<title_shown
+		sta	ei_donejmp
+		lda	#>title_shown
+		sta	ei_donejmp+1
+		lda	#$1b
+		sta	curtainpos
+		lda	#$3b
+		sta	vctl1
+		lda	#$18
+		sta	vctl2
+
+		lda	#$0
+		sta	BG_COLOR_0
+		sta	bordercol
+		jmp	ei_bottom
+
+title_shown:
+		lda	#<titleisr
+		sta	$fffe
+		lda	#>titleisr
+		sta	$ffff
+		jmp	ei_curt_off
+
+titleisr:
+		sta	accu_save
+		stx	x_save
+		sty	y_save
+		lda	#$ff
+		sta	VIC_IRR
+		jsr	js_check
+		ldy	y_save
+		ldx	x_save
+		lda	accu_save
+		rti
 .code
 
 irq_init:

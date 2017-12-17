@@ -1,12 +1,13 @@
 .include "diskio.inc"
 .include "irq.inc"
 .include "zp.inc"
+.include "title.inc"
 
 CHROUT          = $ffd2
 READY           = $a474
 
+.import __TCODE_LOAD__
 .import __MAIN_LOAD__
-.import __TCOL_LOAD__
 
 .segment "BOOT"
 
@@ -120,13 +121,15 @@ chainload:
 		lda	#<filename
 		ldy	#>filename
 		jsr	dio_setname
-		lda	#<__TCOL_LOAD__
-		ldy	#>__TCOL_LOAD__
+		lda	#<__TCODE_LOAD__
+		ldy	#>__TCODE_LOAD__
 		jsr	dio_loadarchive
+		jsr	dio_loadbitmap
 		lda	#<__MAIN_LOAD__
 		ldy	#>__MAIN_LOAD__
 		jsr	dio_loadarchive
 		jsr	dio_endloadarchive
+		jsr	title_loop
 		jmp	__MAIN_LOAD__
 
 

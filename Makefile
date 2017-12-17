@@ -7,17 +7,21 @@ EXO?=exomizer
 C64ASFLAGS?=-t $(C64SYS) -g
 C64LDFLAGS?=-Ln 8192.lbl -m 8192.map -Csrc/8192.cfg
 
+CC?=gcc
+CFLAGS?=-std=c11 -Wall -Wextra -pedantic -O3 -g0
+
+MPMC2ZBB:=tools/mpmc2zbb
+
 ifdef DEBUG
 C64ASFLAGS+=-DDEBUG
 endif
 
 8192_OBJS:=$(addprefix obj/,autoboot.o diskio.o decr.o zp.o charset.o irq.o \
-	titledat.o title.o random.o numconv.o jsinput.o pitches.o \
+	title.o random.o numconv.o jsinput.o pitches.o \
 	instruments.o tunes.o sound.o screen.o board.o main.o)
 8192_BOOTBINS:=8192_boot.bin 8192_load.bin
-8192_MAINBINS:=8192_tbmp.bin 8192_code.bin
+8192_MAINBINS:=8192_tcode.bin 8192_tbmp.bin 8192_code.bin
 8192_EXOS:=$(8192_MAINBINS:.bin=.exo)
-8192_BINS:=$(8192_BOOTBINS) $(8192_MAINBINS)
 8192_PRG:=8192.prg
 8192_ARCH:=8192.exa
 8192_DISK:=8192.d64
@@ -38,8 +42,11 @@ $(8192_ARCH): $(8192_EXOS)
 %.exo: %.bin
 	$(EXO) raw -c -m 2048 -o$@ $<
 
-$(8192_BINS): $(8192_OBJS)
+%.bin: $(8192_OBJS)
 	$(C64LD) -o8192 $(C64LDFLAGS) $^
+
+8192_tbmp.bin: multipaint/title.txt $(MPMC2ZBB)
+	$(MPMC2ZBB) <$< >$@
 
 obj:
 	mkdir obj
@@ -47,11 +54,14 @@ obj:
 obj/%.o: src/%.s src/8192.cfg Makefile | obj
 	$(C64AS) $(C64ASFLAGS) -o$@ $<
 
+$(MPMC2ZBB): tools/mpmc2zbb.c
+	$(CC) -o$@ $(CFLAGS) $<
+
 clean:
 	rm -fr obj *.lbl *.map *.bin
 
 distclean: clean
-	rm -f $(8192_DISK) *.prg *.exa *.exo
+	rm -f $(8192_DISK) $(MPMC2ZBB) *.prg *.exa *.exo
 
 .PHONY: all clean distclean
 

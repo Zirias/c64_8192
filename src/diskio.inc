@@ -1,6 +1,7 @@
 .import dio_init
 .import dio_setname
 .import dio_loadarchive
+.import dio_loadbitmap
 .import dio_endloadarchive
 .import get_crunched_byte
 

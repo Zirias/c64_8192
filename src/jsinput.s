@@ -18,7 +18,7 @@ js_back:	.res	1
 js_repeat:	.res	1
 js_repcnt:	.res	1
 
-.code
+.segment "TCODE"
 
 js_init:
 		lda	#$0

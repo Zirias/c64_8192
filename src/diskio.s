@@ -2,10 +2,12 @@
 .include "cia.inc"
 .include "via.inc"
 .include "decr.inc"
+.include "vicconfig.inc"
 
 .export dio_init
 .export dio_setname
 .export dio_loadarchive
+.export dio_loadbitmap
 .export dio_endloadarchive
 .export get_crunched_byte
 
@@ -195,14 +197,55 @@ dl_nextchunk:	stx	temp4
 dl_loop:	jsr	get_decrunched_byte
 		bcs	dl_endload
 		ldy	temp4
-		dec	$01
 		sta	(dataptr),y
-		inc	$01
 		inc	temp4
 		bne	dl_loop
 		inc	dataptr+1
 		bne	dl_loop
 dl_endload:	rts
+
+.segment "TCODE"
+
+dio_loadbitmap:
+		lda	#$0
+		sta	temp4
+		sta	dataptr
+		sta	col1ptr
+		sta	col2ptr
+		lda	#>vic_bitmap
+		sta	dataptr+1
+		lda	#>vic_colram
+		sta	col1ptr+1
+		lda	#$d8
+		sta	col2ptr+1
+		jsr	init_decruncher
+dlb_loop:	jsr	get_decrunched_byte
+		bcc	dlb_cont
+		rts
+dlb_cont:	dec	$01
+col1ptr		= *+1
+		sta	$ffff
+		inc	$01
+		inc	col1ptr
+		bne	dlb_col2
+		inc	col1ptr+1
+dlb_col2:	jsr	get_decrunched_byte
+col2ptr		= *+1
+		sta	$ffff
+		inc	col2ptr
+		bne	dlb_bitmap
+		inc	col2ptr+1
+dlb_bitmap:	jsr	get_decrunched_byte
+		ldy	temp4
+		sta	(dataptr),y
+		inc	temp4
+		beq	dlb_next
+		lda	temp4
+		and	#$7
+		bne	dlb_bitmap
+		beq	dlb_loop
+dlb_next:	inc	dataptr+1
+		bne	dlb_loop
 
 dio_endloadarchive:
 		tsx
