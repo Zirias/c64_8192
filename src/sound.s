@@ -95,14 +95,7 @@ s_modevol:	.res	1
 
 snd_zpsize	= *-tune
 
-.ifdef DEBUG
-.include "vicconfig.inc"
-.data
-sm_6581:	.byte	"6581"
-sm_8580:	.byte	"8580"
-.endif
-
-.code
+.segment "TCODE"
 
 snd_init:
 		lda	#$0
@@ -133,16 +126,6 @@ si_waitbadline:	lda	VIC_RASTER
 		cli
 		bcc	si_is8580
 
-.ifdef DEBUG
-		dec	$01
-		ldx	#$3
-dbg_6581:	lda	sm_6581,x
-		sta	vic_screenram+$94,x
-		dex
-		bpl	dbg_6581
-		inc	$01
-.endif
-
 		lda	#<(flt6581_l-1)
 		sta	filt_l0
 		lda	#>(flt6581_l-1)
@@ -158,18 +141,7 @@ dbg_6581:	lda	sm_6581,x
 		sta	filt_h2 + 1
 		sta	filt_h3 + 1
 		bne	snd_out
-si_is8580:
-.ifdef DEBUG
-		dec	$01
-		ldx	#$3
-dbg_8580:	lda	sm_8580,x
-		sta	vic_screenram+$94,x
-		dex
-		bpl	dbg_8580
-		inc	$01
-.endif
-
-		lda	#<(flt8580_l-1)
+si_is8580:	lda	#<(flt8580_l-1)
 		sta	filt_l0
 		lda	#>(flt8580_l-1)
 		sta	filt_l0 + 1

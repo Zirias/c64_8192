@@ -4,6 +4,7 @@
 .include "jsinput.inc"
 .include "screen.inc"
 .include "sound.inc"
+.include "charset.inc"
 .include "title.inc"
 
 .export irq_early_init
@@ -88,10 +89,12 @@ setraster:
 		eor	curtaintoggle
 		sta	curtaintoggle
 		beq	sr_curt_on
-		sta	VIC_RASTER
 		lda	VIC_CTL1
 		and	#$7f
-		bpl	sr_store
+		sta	VIC_CTL1
+		lda	#$0
+		sta	VIC_RASTER
+		beq	sr_done
 sr_curt_on:	lda	VIC_CTL1
 		ora	#$80
 		sta	VIC_CTL1
@@ -101,7 +104,7 @@ sr_curt_on:	lda	VIC_CTL1
 		bcs	sr_done
 		lda	VIC_CTL1
 		and	#$7f
-sr_store:	sta	VIC_CTL1
+		sta	VIC_CTL1
 sr_done:	rts
 
 eisr_wait:
@@ -165,7 +168,7 @@ title_show:
 		sta	ei_donejmp
 		lda	#>title_shown
 		sta	ei_donejmp+1
-		lda	#$1b
+		lda	#$3
 		sta	curtainpos
 		lda	#$3b
 		sta	vctl1
@@ -182,14 +185,30 @@ title_shown:
 		sta	$fffe
 		lda	#>titleisr
 		sta	$ffff
-		jmp	ei_curt_off
+		sty	y_save
+		stx	x_save
+		lda	#$18
+		sta	VIC_CTL2
+		lda	#$3b
+		sta	VIC_CTL1
+		lda	#$b4
+		sta	VIC_RASTER
+		jsr	charset_init
+		jsr	title_init
+		ldx	x_save
+		ldy	y_save
+		jmp	ei_out
 
 titleisr:
 		sta	accu_save
+		lda	VIC_RASTER
+ti_waitline:	cmp	VIC_RASTER
+		beq	ti_waitline
 		stx	x_save
 		sty	y_save
 		lda	#$ff
 		sta	VIC_IRR
+		jsr	title_scroll
 		jsr	js_check
 		ldy	y_save
 		ldx	x_save
@@ -203,6 +222,9 @@ irq_init:
 
 		lda	#vic_memctl_text
 		sta	VIC_MEMCTL
+
+		lda	#$0
+		sta	SPRITE_SHOW
 
 		; install ISR for VIC IRQ
 		lda	#<isr

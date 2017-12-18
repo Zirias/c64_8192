@@ -7,7 +7,7 @@
 
 tempptr:	.res	2
 
-.code
+.segment "TCODE"
 
 charset_init:
 		lda	#$00
@@ -59,8 +59,6 @@ combnums_loop:	lda	combnums-1,x
 charset_done:
 		rts
 
-.data
-
 corners:	.byte	$00,$07,$1f,$3f,$3f,$7f,$7f,$7f
 		.byte	$00,$e0,$f8,$fc,$fc,$fe,$fe,$fe
 corners_len	= *-corners
@@ -79,4 +77,5 @@ combnums:	.byte	$fc,$f9,$ff,$ff,$fc,$f9,$f8,$ff
 		.byte	$3f,$9f,$ff,$3f,$9f,$9f,$3f,$ff
 		.byte	$f8,$f9,$f8,$ff,$ff,$f9,$fc,$ff
 		.byte	$1e,$fe,$3c,$9e,$9e,$9e,$38,$ff
+		.byte	$3c,$66,$5a,$52,$5a,$66,$3c,$00
 combnums_len	= *-combnums

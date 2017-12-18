@@ -8,10 +8,10 @@ vic_bank = $c0
 vic_charpage = $18
 
 ; start page of color memory in vic AS
-vic_colpage = $1c
+vic_colpage = $14
 
 ; start page of screen memory in vic AS
-vic_screenpage = $14
+vic_screenpage = $10
 
 ; start page for spriteset in vic AS
 vic_sprite_base = $1a

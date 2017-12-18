@@ -1,5 +1,4 @@
 .include "irq.inc"
-.include "charset.inc"
 .include "random.inc"
 .include "jsinput.inc"
 .include "screen.inc"
@@ -16,7 +15,6 @@ validmove:	.res	1
 
 		sei
 		jsr	rnd_init
-		jsr	charset_init
 		jsr	board_init
 		jsr	screen_init
 		jsr	js_init
