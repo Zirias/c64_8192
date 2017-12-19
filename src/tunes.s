@@ -14,9 +14,10 @@ tunes_l:	.byte	<tune_ingame, <tune_title
 tunes_h:	.byte	>tune_ingame, >tune_title
 
 tune_title:
-		.byte	$06
+		.byte	$04
 
 		.byte	$00,$00,$12,$00
+		.byte	$00,$00,$12,$13
 		.byte	$80,$01
 
 .data
@@ -56,11 +57,13 @@ patterns_l:
 		.byte	<pat1, <pat2, <pat3, <pat4, <pat5, <pat6
 		.byte	<pat7, <pat8, <pat9, <pata, <patb, <patc
 		.byte	<patd, <pate, <patf, <pat10, <pat11, <pat12
+		.byte	<pat13
 
 patterns_h:
 		.byte	>pat1, >pat2, >pat3, >pat4, >pat5, >pat6
 		.byte	>pat7, >pat8, >pat9, >pata, >patb, >patc
 		.byte	>patd, >pate, >patf, >pat10, >pat11, >pat12
+		.byte	>pat13
 
 pat12:
 		.byte	$03,PT_F0
@@ -88,6 +91,41 @@ pat12:
 		.byte	$03,PT_F0
 		.byte	$00
 		.byte	$03,PT_F0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$ff
+
+pat13:
+		.byte	$0b,PT_F4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0b,PT_F4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
 		.byte	$00
 		.byte	$00
 		.byte	$00

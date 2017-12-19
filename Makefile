@@ -21,6 +21,7 @@ endif
 	instruments.o tunes.o sound.o screen.o board.o main.o)
 8192_BOOTBINS:=8192_boot.bin 8192_load.bin
 8192_MAINBINS:=8192_tcode.bin 8192_tbmp.bin 8192_code.bin
+8192_BINS:=$(8192_BOOTBINS) $(8192_MAINBINS)
 8192_EXOS:=$(8192_MAINBINS:.bin=.exo)
 8192_PRG:=8192.prg
 8192_ARCH:=8192.exa
@@ -64,4 +65,5 @@ distclean: clean
 	rm -f $(8192_DISK) $(MPMC2ZBB) *.prg *.exa *.exo
 
 .PHONY: all clean distclean
+.PRECIOUS: $(8192_OBJS) $(8192_BINS)
 
