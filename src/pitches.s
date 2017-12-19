@@ -1,7 +1,7 @@
 .export pitches_l
 .export pitches_h
 
-.data
+.segment "TCODE"
 
 pitchtbl_l:
 		.byte	$3b,$5d,$81,$a7,$cf,$fa,$27,$57,$8a,$c0,$f9,$34

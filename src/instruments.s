@@ -23,7 +23,7 @@
 .export sfx_ft
 .export sfx_pitch
 
-.data
+.segment "TCODE"
 
 inst_ad:
 		.byte	$13
@@ -188,6 +188,8 @@ flt6581_l:
 flt6581_h:
 		.byte	$52,$9c,$fa,$00
 		.byte	$22,$7c,$fa,$00
+
+.data
 
 sfx_ad:
 		.byte	$a2

@@ -9,6 +9,7 @@
 
 .export irq_early_init
 .export irq_init
+.export irq_nextstate
 .export irq_done
 
 FRAMESKIP	= 1
@@ -24,6 +25,8 @@ x_save:		.res	1
 y_save:		.res	1
 bank_save:	.res	1
 framephase:	.res	1
+loadstate:	.res	1
+curtaindelay:	.res	1
 curtainpos	= framephase
 curtaintoggle	= y_save
 
@@ -69,6 +72,9 @@ irq_early_init:
 		sta	curtainpos
 		lda	#$1
 		sta	curtaintoggle
+		lda	#$0
+		sta	loadstate
+		sta	curtaindelay
 
 		lda	#OP_BEQ
 		sta	ei_on_off
@@ -132,6 +138,8 @@ ei_curt_on:	lda	#$d8
 		lda	curtainpos
 		cmp	#$9a
 		bcc	ei_bottom
+		lda	loadstate
+		beq	ei_out
 ei_donejmp	= *+1
 		jmp	$ffff
 ei_curt_off:
@@ -144,7 +152,11 @@ bordercol	= *+1
 vctl1		= *+1
 		lda	#$ff
 		sta	VIC_CTL1
-		inc	curtainpos
+		lda	curtaindelay
+		beq	ei_movecurtain
+		dec	curtaindelay
+		bne	ei_bottom
+ei_movecurtain:	inc	curtainpos
 ei_bottom:	jsr	setraster
 ei_out:		lda	bank_save
 		sta	$01
@@ -153,12 +165,15 @@ ei_end:		rti
 
 .segment "TCODE"
 
+irq_nextstate:
+		inc	loadstate
+		rts
+
 title_show:
 		; VIC memory configuration
 		lda	CIA2_PRA
 		and	#vic_bankselect_and
 		sta	CIA2_PRA
-		lda	VIC_MEMCTL
 		lda	#vic_memctl_hires
 		sta	VIC_MEMCTL
 
@@ -168,8 +183,10 @@ title_show:
 		sta	ei_donejmp
 		lda	#>title_shown
 		sta	ei_donejmp+1
-		lda	#$3
+		lda	#$1b
 		sta	curtainpos
+		lda	#$30
+		sta	curtaindelay
 		lda	#$3b
 		sta	vctl1
 		lda	#$18
@@ -191,10 +208,12 @@ title_shown:
 		sta	VIC_CTL2
 		lda	#$3b
 		sta	VIC_CTL1
-		lda	#$b4
+		lda	#$ae
 		sta	VIC_RASTER
 		jsr	charset_init
 		jsr	title_init
+		lda	#$1
+		jsr	snd_settune
 		ldx	x_save
 		ldy	y_save
 		jmp	ei_out
@@ -208,8 +227,10 @@ ti_waitline:	cmp	VIC_RASTER
 		sty	y_save
 		lda	#$ff
 		sta	VIC_IRR
+		jsr	snd_out
 		jsr	title_scroll
 		jsr	js_check
+		jsr	snd_step
 		ldy	y_save
 		ldx	x_save
 		lda	accu_save

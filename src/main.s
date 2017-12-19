@@ -19,7 +19,6 @@ validmove:	.res	1
 		jsr	screen_init
 		jsr	js_init
 		jsr	irq_init
-		jsr	snd_init
 		cli
 
 		lda	#$0

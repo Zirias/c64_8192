@@ -7,11 +7,19 @@
 .export patterns_h
 
 
+.segment "TCODE"
+
+tunes_l:	.byte	<tune_ingame, <tune_title
+
+tunes_h:	.byte	>tune_ingame, >tune_title
+
+tune_title:
+		.byte	$06
+
+		.byte	$00,$00,$12,$00
+		.byte	$80,$01
+
 .data
-
-tunes_l:	.byte	<tune_ingame
-
-tunes_h:	.byte	>tune_ingame
 
 tune_ingame:
 		.byte	$06
@@ -42,15 +50,54 @@ tune_ingame:
 
 		.byte	$80,$05
 
+.segment "TCODE"
+
 patterns_l:
 		.byte	<pat1, <pat2, <pat3, <pat4, <pat5, <pat6
 		.byte	<pat7, <pat8, <pat9, <pata, <patb, <patc
-		.byte	<patd, <pate, <patf, <pat10, <pat11
+		.byte	<patd, <pate, <patf, <pat10, <pat11, <pat12
 
 patterns_h:
 		.byte	>pat1, >pat2, >pat3, >pat4, >pat5, >pat6
 		.byte	>pat7, >pat8, >pat9, >pata, >patb, >patc
-		.byte	>patd, >pate, >patf, >pat10, >pat11
+		.byte	>patd, >pate, >patf, >pat10, >pat11, >pat12
+
+pat12:
+		.byte	$03,PT_F0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_F0
+		.byte	$00
+		.byte	$03,PT_F0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_F0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$03,PT_F0
+		.byte	$00
+		.byte	$03,PT_F0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$ff
+
+.data
 
 pat1:
 		.byte	$01,PT_C3

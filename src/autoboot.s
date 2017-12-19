@@ -2,6 +2,7 @@
 .include "irq.inc"
 .include "zp.inc"
 .include "title.inc"
+.include "sound.inc"
 
 CHROUT          = $ffd2
 READY           = $a474
@@ -124,6 +125,8 @@ chainload:
 		lda	#<__TCODE_LOAD__
 		ldy	#>__TCODE_LOAD__
 		jsr	dio_loadarchive
+		jsr	snd_init
+		jsr	irq_nextstate
 		jsr	dio_loadbitmap
 		lda	#<__MAIN_LOAD__
 		ldy	#>__MAIN_LOAD__

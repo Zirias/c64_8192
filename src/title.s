@@ -99,9 +99,6 @@ ti_spclr:	sta	$ff00,x
 		rts
 
 title_scroll:
-		ldx	#$2
-ts_w0:		dex
-		bne	ts_w0
 ts_col0		= *+1
 		lda	#$0b
 		sta	SPRITE_0_COL
@@ -138,9 +135,11 @@ ts_col2		= *+1
 		sta	SPRITE_4_COL
 		sta	SPRITE_5_COL
 		sta	SPRITE_6_COL
-		ldx	#$8
+		ldx	#$4
 ts_w3:		dex
 		bne	ts_w3
+		nop
+		nop
 		nop
 ts_col3		= *+1
 		lda	#$0d
@@ -187,9 +186,12 @@ ts_col6		= *+1
 		sta	SPRITE_4_COL
 		sta	SPRITE_5_COL
 		sta	SPRITE_6_COL
-		ldx	#$8
+		ldx	#$6
 ts_w7:		dex
 		bne	ts_w7
+		nop
+		nop
+		nop
 ts_col7		= *+1
 		lda	#$0b
 		sta	SPRITE_0_COL
