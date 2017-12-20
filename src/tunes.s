@@ -94,7 +94,7 @@ pat12:
 		.byte	$00
 		.byte	$00
 		.byte	$00
-		.byte	$00
+		.byte	$0c,PT_C1
 		.byte	$00
 		.byte	$00
 		.byte	$00
@@ -129,7 +129,7 @@ pat13:
 		.byte	$00
 		.byte	$00
 		.byte	$00
-		.byte	$00
+		.byte	$0b,PT_F4
 		.byte	$00
 		.byte	$00
 		.byte	$00

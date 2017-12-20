@@ -272,8 +272,13 @@ ss_wtjmp:	beq	ss_wtdone
 		bcs	ss_wtjmp
 ss_dowave:	sta	s_cr1,x
 		lda	wave_h-1,y
-		jsr	ss_setpitchoff
-		iny
+		bpl	ss_dopitchoff
+		cmp	#$c8
+		bcs	ss_dopitchoff
+		jsr	ss_setpitch
+		bne	ss_wtnext
+ss_dopitchoff:	jsr	ss_setpitchoff
+ss_wtnext:	iny
 ss_wtdone:	sty	wtpos0,x
 		rts
 
