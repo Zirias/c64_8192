@@ -19,6 +19,7 @@ tune_title:
 		.byte	$00,$00,$12,$00
 		.byte	$00,$00,$12,$13
 		.byte	$00,$14,$15,$16
+		.byte	$00,$17,$18,$19
 		.byte	$80,$09
 
 .data
@@ -58,13 +59,15 @@ patterns_l:
 		.byte	<pat1, <pat2, <pat3, <pat4, <pat5, <pat6
 		.byte	<pat7, <pat8, <pat9, <pata, <patb, <patc
 		.byte	<patd, <pate, <patf, <pat10, <pat11, <pat12
-		.byte	<pat13, <pat14, <pat15, <pat16
+		.byte	<pat13, <pat14, <pat15, <pat16, <pat17, <pat18
+		.byte	<pat19
 
 patterns_h:
 		.byte	>pat1, >pat2, >pat3, >pat4, >pat5, >pat6
 		.byte	>pat7, >pat8, >pat9, >pata, >patb, >patc
 		.byte	>patd, >pate, >patf, >pat10, >pat11, >pat12
-		.byte	>pat13, >pat14, >pat15, >pat16
+		.byte	>pat13, >pat14, >pat15, >pat16, >pat17, >pat18
+		.byte	>pat19
 
 pat12:
 		.byte	$0e,PT_F0
@@ -236,6 +239,111 @@ pat16:
 		.byte	$00
 		.byte	$00
 		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$ff
+
+pat17:
+		.byte	$00
+		.byte	$00
+		.byte	$0d,PT_D4
+		.byte	$c0
+		.byte	$0d,PT_G4
+		.byte	$00
+		.byte	$0d,PT_D4
+		.byte	$c0
+		.byte	$0d,PT_BF4
+		.byte	$00
+		.byte	$80,PT_A4
+		.byte	$00
+		.byte	$0d,PT_G4
+		.byte	$00
+		.byte	$0d,PT_FS4
+		.byte	$0d,PT_G4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$c0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0d,PT_EF4
+		.byte	$00
+		.byte	$00
+		.byte	$c0
+		.byte	$0d,PT_F4
+		.byte	$00
+		.byte	$80,PT_D4
+		.byte	$c0
+		.byte	$ff
+
+pat18:
+		.byte	$0e,PT_G0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$0e,PT_G0
+		.byte	$00
+		.byte	$0e,PT_G0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0e,PT_G0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0e,PT_EF0
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$0e,PT_F0
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$ff
+
+pat19:
+		.byte	$0b,PT_G4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0b,PT_G4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0f,PT_EF4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$10,PT_F4
 		.byte	$00
 		.byte	$00
 		.byte	$00

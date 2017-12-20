@@ -12,7 +12,6 @@
 nextchar_0:	.res	8
 nextchar_1:	.res	8
 charbit:	.res	1
-scrtextpos:	.res	1
 temp1:		.res	1
 temp2:		.res	1
 startcol:	.res	1
@@ -93,9 +92,12 @@ ti_spclr:	sta	$ff00,x
 		sta	SPRITE_SHOW
 		lda	#$0
 		sta	charbit
-		sta	scrtextpos
 		sta	startcol
 		sta	colcounter
+		lda	#<scrolltext
+		sta	scrolltextptr
+		lda	#>scrolltext
+		sta	scrolltextptr+1
 		rts
 
 title_scroll:
@@ -253,12 +255,8 @@ ts_docol7:	lda	colors,x
 ts_doscroll:	dec	$01
 		ldx	charbit
 		bne	ts_scrollbit
-		ldx	scrtextpos
-		cpx	#scrolltextlen
-		bne	ts_fetchchar
-		ldx	#$0
-		stx	scrtextpos
-ts_fetchchar:	lda	scrolltext,x
+scrolltextptr	= *+1
+		lda	$ffff
 		asl	a
 		rol	charbit
 		asl	a
@@ -277,7 +275,19 @@ ts_fetchloop:	lda	$ffff,x
 		bpl	ts_fetchloop
 		lda	#$8
 		sta	charbit
-		inc	scrtextpos
+		inc	scrolltextptr
+		bne	ts_checkptr
+		inc	scrolltextptr+1
+ts_checkptr:	lda	scrolltextptr
+		cmp	#<scrolltextend
+		bne	ts_scrollbit
+		lda	scrolltextptr+1
+		cmp	#>scrolltextend
+		bne	ts_scrollbit
+		lda	#<scrolltext
+		sta	scrolltextptr
+		lda	#>scrolltext
+		sta	scrolltextptr+1
 ts_scrollbit:	ldx	#$7
 		stx	temp1
 		ldx	#$15
@@ -319,11 +329,14 @@ scrolltext:
 		plainchr "8192 Game "
 		.byte	$ff
 		plainchr " 2018 by Zirias <felix@palmen-it.de> "
-		plainchr " -- press FIRE to start!   This only exists "
-		plainchr "because I wanted to create my own little simple "
-		plainchr "game. A game needs a title screen and a scroller, "
+		plainchr " -- press FIRE to start --       This only exists "
+		plainchr "because I wanted to create my own little game. "
+		plainchr "A game needs a title screen and a scroller, "
 		plainchr "so here it is ;)       "
-scrolltextlen	= *-scrolltext
+		plainchr "Tools used: vim, GNU make, ca65/ld65, multipaint, "
+		plainchr "exomizer and mkd64.       "
+		plainchr "Greetings to all C64 enthusiasts, have fun!       "
+scrolltextend:
 
 colors:		.byte	$0b,$0c,$0f,$0d,$01,$0f,$0c
 numcolors	= *-colors

@@ -185,7 +185,7 @@ title_show:
 		sta	ei_donejmp+1
 		lda	#$18
 		sta	curtainpos
-		lda	#$48
+		lda	#$4d
 		sta	curtaindelay
 		lda	#$3b
 		sta	vctl1
