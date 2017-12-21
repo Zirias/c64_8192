@@ -1,0 +1,24 @@
+KBC_F1          = 1
+KBC_F2          = 2
+KBC_F3          = 3
+KBC_F4          = 4
+KBC_F5          = 5
+KBC_F6          = 6
+KBC_F7          = 7
+KBC_F8          = 8
+KBC_DOWN        = 9
+KBC_UP          = 10
+KBC_RIGHT       = 11
+KBC_LEFT        = 12
+KBC_ENTER       = 13
+KBC_ENTER1      = 14
+KBC_HOME        = 15
+KBC_CLEAR       = 16
+KBC_BACKSPACE   = 17
+KBC_INSERT      = 18
+KBC_CBM         = 19
+KBC_CBM1        = 20
+KBC_STOP        = 21
+KBC_RUN         = 22
+
+; vim: ft=asm:et:si:ts=8:sts=8:sw=8

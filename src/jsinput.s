@@ -8,7 +8,6 @@
 
 .zeropage
 
-js_buf:		.res	$10
 js_latest:	.res	1
 js_debounce:	.res	1
 js_next:	.res	1
@@ -17,6 +16,10 @@ js_front:	.res	1
 js_back:	.res	1
 js_repeat:	.res	1
 js_repcnt:	.res	1
+
+.bss
+
+js_buf:		.res	$10
 
 .segment "TCODE"
 
@@ -30,6 +33,8 @@ js_init:
 		rts
 
 js_check:
+		lda	#$0
+		sta	CIA1_DDRA
 		lda	CIA1_PRA
 		and	#$1f
 		eor	#$1f

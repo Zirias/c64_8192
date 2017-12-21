@@ -6,6 +6,7 @@
 .include "sound.inc"
 .include "charset.inc"
 .include "title.inc"
+.include "keyboard.inc"
 
 .export irq_early_init
 .export irq_init
@@ -208,10 +209,13 @@ title_shown:
 		sta	VIC_CTL2
 		lda	#$3b
 		sta	VIC_CTL1
-		lda	#$ae
+		lda	#$ad
 		sta	VIC_RASTER
 		jsr	charset_init
 		jsr	title_init
+		jsr	js_init
+		lda	#$0
+		jsr	kb_init
 		lda	#$1
 		jsr	snd_settune
 		ldx	x_save
@@ -230,6 +234,7 @@ ti_waitline:	cmp	VIC_RASTER
 		jsr	snd_out
 		jsr	title_scroll
 		jsr	js_check
+		jsr	kb_check
 		jsr	snd_step
 		ldy	y_save
 		ldx	x_save
@@ -282,26 +287,20 @@ isr:
 		lda	#$56
 		sta	VIC_RASTER
 		dec	framephase
-		bpl	isr_nodraw
+		bpl	isr_bottom
 		lda	#FRAMESKIP
 		sta	framephase
 		jsr	screen_refresh
-isr_nodraw:	jsr	js_check
-		jmp	isr_bottom
+		beq	isr_bottom
 
 isr_upper:	lda	#$f2
 		sta	VIC_RASTER
-.ifdef DEBUG
-		inc	$d020
-.endif
 		jsr	snd_out
 		jsr	snd_step
-.ifdef DEBUG
-		dec	$d020
-.endif
-		jsr	js_check
 
-isr_bottom:	ldy	y_save
+isr_bottom:	jsr	js_check
+		jsr	kb_check
+		ldy	y_save
 		ldx	x_save
 		lda	accu_save
 isrend:		rti

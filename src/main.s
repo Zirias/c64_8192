@@ -1,6 +1,6 @@
 .include "irq.inc"
 .include "random.inc"
-.include "jsinput.inc"
+.include "dirinput.inc"
 .include "screen.inc"
 .include "board.inc"
 .include "vicconfig.inc"
@@ -17,7 +17,6 @@ validmove:	.res	1
 		jsr	rnd_init
 		jsr	board_init
 		jsr	screen_init
-		jsr	js_init
 		jsr	irq_init
 		cli
 
@@ -41,7 +40,7 @@ mainloop:	jsr	board_addpiece
 		jsr	board_canmove
 		bcc	gameover
 
-check_js:	jsr	js_get
+check_js:	jsr	dir_get
 		bcs	check_js
 		jsr	board_setdir
 		bcs	check_js

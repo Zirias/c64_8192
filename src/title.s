@@ -1,4 +1,5 @@
 .include "jsinput.inc"
+.include "keyboard.inc"
 .include "vic.inc"
 .include "vicconfig.inc"
 .include "charconv.inc"
@@ -100,109 +101,56 @@ ti_spclr:	sta	$ff00,x
 		sta	scrolltextptr+1
 		rts
 
+ts_setcols:
+tssc_w:		dex
+		bne	tssc_w
+		sta	SPRITE_0_COL
+		sta	SPRITE_1_COL
+		sta	SPRITE_2_COL
+		sta	SPRITE_3_COL
+		sta	SPRITE_4_COL
+		sta	SPRITE_5_COL
+		sta	SPRITE_6_COL
+		rts
+
 title_scroll:
 ts_col0		= *+1
 		lda	#$0b
-		sta	SPRITE_0_COL
-		sta	SPRITE_1_COL
-		sta	SPRITE_2_COL
-		sta	SPRITE_3_COL
-		sta	SPRITE_4_COL
-		sta	SPRITE_5_COL
-		sta	SPRITE_6_COL
-		ldx	#$b
-ts_w1:		dex
-		bne	ts_w1
+		ldx	#$09
+		jsr	ts_setcols
 ts_col1		= *+1
 		lda	#$0c
-		sta	SPRITE_0_COL
-		sta	SPRITE_1_COL
-		sta	SPRITE_2_COL
-		sta	SPRITE_3_COL
-		sta	SPRITE_4_COL
-		sta	SPRITE_5_COL
-		sta	SPRITE_6_COL
-		ldx	#$b
-ts_w2:		dex
-		bne	ts_w2
-		nop
-		nop
-		nop
+		ldx	#$09
+		jsr	ts_setcols
 ts_col2		= *+1
 		lda	#$0f
-		sta	SPRITE_0_COL
-		sta	SPRITE_1_COL
-		sta	SPRITE_2_COL
-		sta	SPRITE_3_COL
-		sta	SPRITE_4_COL
-		sta	SPRITE_5_COL
-		sta	SPRITE_6_COL
-		ldx	#$4
-ts_w3:		dex
-		bne	ts_w3
-		nop
-		nop
-		nop
+		ldx	#$09
+		jsr	ts_setcols
 ts_col3		= *+1
 		lda	#$0d
-		sta	SPRITE_0_COL
-		sta	SPRITE_1_COL
-		sta	SPRITE_2_COL
-		sta	SPRITE_3_COL
-		sta	SPRITE_4_COL
-		sta	SPRITE_5_COL
-		sta	SPRITE_6_COL
-		ldx	#$b
-ts_w4:		dex
-		bne	ts_w4
+		ldx	#$04
+		nop
+		nop
+		nop
+		jsr	ts_setcols
 ts_col4		= *+1
 		lda	#$01
-		sta	SPRITE_0_COL
-		sta	SPRITE_1_COL
-		sta	SPRITE_2_COL
-		sta	SPRITE_3_COL
-		sta	SPRITE_4_COL
-		sta	SPRITE_5_COL
-		sta	SPRITE_6_COL
-		ldx	#$b
-ts_w5:		dex
-		bne	ts_w5
+		ldx	#$09
+		jsr	ts_setcols
 ts_col5		= *+1
 		lda	#$0f
-		sta	SPRITE_0_COL
-		sta	SPRITE_1_COL
-		sta	SPRITE_2_COL
-		sta	SPRITE_3_COL
-		sta	SPRITE_4_COL
-		sta	SPRITE_5_COL
-		sta	SPRITE_6_COL
-		ldx	#$b
-ts_w6:		dex
-		bne	ts_w6
+		ldx	#$09
+		jsr	ts_setcols
 ts_col6		= *+1
 		lda	#$0c
-		sta	SPRITE_0_COL
-		sta	SPRITE_1_COL
-		sta	SPRITE_2_COL
-		sta	SPRITE_3_COL
-		sta	SPRITE_4_COL
-		sta	SPRITE_5_COL
-		sta	SPRITE_6_COL
-		ldx	#$6
-ts_w7:		dex
-		bne	ts_w7
-		nop
-		nop
-		nop
+		ldx	#$09
+		jsr	ts_setcols
 ts_col7		= *+1
 		lda	#$0b
-		sta	SPRITE_0_COL
-		sta	SPRITE_1_COL
-		sta	SPRITE_2_COL
-		sta	SPRITE_3_COL
-		sta	SPRITE_4_COL
-		sta	SPRITE_5_COL
-		sta	SPRITE_6_COL
+		ldx	#$03
+		nop
+		nop
+		jsr	ts_setcols
 
 		lda	#$01
 		eor	colcounter
@@ -329,7 +277,9 @@ scrolltext:
 		plainchr "8192 Game "
 		.byte	$ff
 		plainchr " 2018 by Zirias <felix@palmen-it.de> "
-		plainchr " -- press FIRE to start --       This only exists "
+		plainchr " -- press FIRE to start --       "
+		plainchr "Control with joystick in port #2 or <i>, <j>, <k>, "
+		plainchr "<l> and <space>.       This only exists "
 		plainchr "because I wanted to create my own little game. "
 		plainchr "A game needs a title screen and a scroller, "
 		plainchr "so here it is ;)       "
@@ -347,8 +297,12 @@ numcolors	= *-colors
 title_loop:
 		jsr	js_flush
 tl_waitfire:	jsr	js_get
-		bcs	tl_waitfire
+		bcs	tl_checkkb
 		cmp	#JS_FIRE
+		beq	tl_exit
+tl_checkkb:	jsr	kb_get
+		bcs	tl_waitfire
+		cmp	#$3b		; scancode for space
 		bne	tl_waitfire
-		rts
+tl_exit:	rts
 
