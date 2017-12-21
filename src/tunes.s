@@ -18,9 +18,26 @@ tune_title:
 
 		.byte	$00,$00,$12,$00
 		.byte	$00,$00,$12,$13
+
 		.byte	$00,$14,$15,$16
 		.byte	$00,$17,$18,$19
-		.byte	$80,$09
+		.byte	$00,$14,$15,$16
+		.byte	$00,$17,$18,$19
+		.byte	$00,$1a,$1b,$1c
+
+		.byte	$00,$14,$15,$16
+		.byte	$00,$17,$18,$19
+		.byte	$00,$14,$15,$16
+		.byte	$00,$17,$18,$19
+		.byte	$00,$1a,$1b,$1c
+		.byte	$00,$1d,$1b,$1c
+		.byte	$00,$1e,$15,$16
+		.byte	$00,$1e,$15,$16
+		.byte	$00,$1f,$1b,$1c
+		.byte	$00,$20,$21,$22
+
+		.byte	$00,$23,$15,$16
+		.byte	$80,$0d
 
 .data
 
@@ -60,14 +77,16 @@ patterns_l:
 		.byte	<pat7, <pat8, <pat9, <pata, <patb, <patc
 		.byte	<patd, <pate, <patf, <pat10, <pat11, <pat12
 		.byte	<pat13, <pat14, <pat15, <pat16, <pat17, <pat18
-		.byte	<pat19
+		.byte	<pat19, <pat1a, <pat1b, <pat1c, <pat1d, <pat1e
+		.byte	<pat1f, <pat20, <pat21, <pat22, <pat23
 
 patterns_h:
 		.byte	>pat1, >pat2, >pat3, >pat4, >pat5, >pat6
 		.byte	>pat7, >pat8, >pat9, >pata, >patb, >patc
 		.byte	>patd, >pate, >patf, >pat10, >pat11, >pat12
 		.byte	>pat13, >pat14, >pat15, >pat16, >pat17, >pat18
-		.byte	>pat19
+		.byte	>pat19, >pat1a, >pat1b, >pat1c, >pat1d, >pat1e
+		.byte	>pat1f, >pat20, >pat21, >pat22, >pat23
 
 pat12:
 		.byte	$0e,PT_F0
@@ -347,6 +366,356 @@ pat19:
 		.byte	$00
 		.byte	$00
 		.byte	$00
+		.byte	$ff
+
+pat1a:
+		.byte	$0d,PT_D4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$c0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0d,PT_EF4
+		.byte	$00
+		.byte	$00
+		.byte	$c0
+		.byte	$0d,PT_F4
+		.byte	$00
+		.byte	$80,PT_D4
+		.byte	$c0
+		.byte	$ff
+
+pat1b:
+		.byte	$0e,PT_D0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$0e,PT_D0
+		.byte	$00
+		.byte	$0e,PT_D0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0e,PT_D1
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0e,PT_EF0
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$0e,PT_F0
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$ff
+
+pat1c:
+		.byte	$10,PT_D4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$10,PT_D4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0f,PT_EF4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$10,PT_F4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$ff
+
+pat1d:
+		.byte	$0d,PT_D4
+		.byte	$80,PT_FS4
+		.byte	$0d,PT_A4
+		.byte	$0d,PT_G4
+		.byte	$0d,PT_FS4
+		.byte	$80,PT_G4
+		.byte	$0d,PT_E4
+		.byte	$80,PT_FS4
+		.byte	$0d,PT_D4
+		.byte	$80,PT_FS4
+		.byte	$0d,PT_A4
+		.byte	$0d,PT_FS4
+		.byte	$0d,PT_BF4
+		.byte	$0d,PT_A4
+		.byte	$0d,PT_G4
+		.byte	$0d,PT_FS4
+		.byte	$0d,PT_D4
+		.byte	$00
+		.byte	$00
+		.byte	$c0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0d,PT_D4
+		.byte	$80,PT_EF4
+		.byte	$0d,PT_FS4
+		.byte	$0d,PT_G4
+		.byte	$0d,PT_A4
+		.byte	$80,PT_G4
+		.byte	$0d,PT_A4
+		.byte	$0d,PT_D4
+		.byte	$ff
+
+pat1e:
+		.byte	$0d,PT_G4
+		.byte	$80,PT_D4
+		.byte	$0d,PT_G4
+		.byte	$0d,PT_A4
+		.byte	$0d,PT_BF4
+		.byte	$80,PT_A4
+		.byte	$0d,PT_G4
+		.byte	$0d,PT_FS4
+		.byte	$0d,PT_G4
+		.byte	$0d,PT_D4
+		.byte	$0d,PT_BF3
+		.byte	$80,PT_D4
+		.byte	$0d,PT_A3
+		.byte	$80,PT_D4
+		.byte	$0d,PT_G3
+		.byte	$80,PT_D4
+		.byte	$0d,PT_G4
+		.byte	$80,PT_D4
+		.byte	$0d,PT_C4
+		.byte	$0d,PT_D4
+		.byte	$0d,PT_BF3
+		.byte	$0d,PT_D4
+		.byte	$0d,PT_G3
+		.byte	$0d,PT_D4
+		.byte	$0d,PT_C4
+		.byte	$0d,PT_EF4
+		.byte	$80,PT_D4
+		.byte	$0d,PT_C4
+		.byte	$0d,PT_D4
+		.byte	$80,PT_FS4
+		.byte	$0d,PT_A4
+		.byte	$0d,PT_FS4
+		.byte	$ff
+
+pat1f:
+		.byte	$0d,PT_D4
+		.byte	$80,PT_FS4
+		.byte	$0d,PT_A4
+		.byte	$0d,PT_G4
+		.byte	$0d,PT_FS4
+		.byte	$80,PT_G4
+		.byte	$0d,PT_E4
+		.byte	$80,PT_FS4
+		.byte	$0d,PT_D4
+		.byte	$80,PT_FS4
+		.byte	$0d,PT_A4
+		.byte	$0d,PT_FS4
+		.byte	$0d,PT_BF4
+		.byte	$0d,PT_A4
+		.byte	$0d,PT_G4
+		.byte	$0d,PT_FS4
+		.byte	$0d,PT_D4
+		.byte	$00
+		.byte	$00
+		.byte	$c0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0d,PT_EF4
+		.byte	$00
+		.byte	$00
+		.byte	$c0
+		.byte	$0d,PT_F4
+		.byte	$00
+		.byte	$80,PT_D4
+		.byte	$c0
+		.byte	$ff
+
+pat20:
+		.byte	$0d,PT_D4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$c0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0d,PT_D4
+		.byte	$00
+		.byte	$00
+		.byte	$0d,PT_EF4
+		.byte	$00
+		.byte	$0d,PT_E4
+		.byte	$00
+		.byte	$00
+		.byte	$0d,PT_F4
+		.byte	$00
+		.byte	$00
+		.byte	$0d,PT_FS4
+		.byte	$00
+		.byte	$ff
+
+pat21:
+		.byte	$0e,PT_D0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$0e,PT_D0
+		.byte	$00
+		.byte	$0e,PT_D0
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0c,PT_C1
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$0e,PT_D1
+		.byte	$00
+		.byte	$00
+		.byte	$0e,PT_D0
+		.byte	$00
+		.byte	$00
+		.byte	$0e,PT_EF0
+		.byte	$00
+		.byte	$0e,PT_E0
+		.byte	$00
+		.byte	$00
+		.byte	$0e,PT_F0
+		.byte	$00
+		.byte	$00
+		.byte	$0e,PT_FS0
+		.byte	$00
+		.byte	$ff
+
+pat22:
+		.byte	$10,PT_D4
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$00
+		.byte	$10,PT_D4
+		.byte	$00
+		.byte	$00
+		.byte	$10,PT_EF4
+		.byte	$00
+		.byte	$10,PT_E4
+		.byte	$00
+		.byte	$00
+		.byte	$10,PT_F4
+		.byte	$00
+		.byte	$00
+		.byte	$10,PT_D4
+		.byte	$00
+		.byte	$ff
+
+pat23:
+		.byte	$0d,PT_G4
+		.byte	$00
+		.byte	$0d,PT_D4
+		.byte	$c0
+		.byte	$0d,PT_G4
+		.byte	$00
+		.byte	$0d,PT_D4
+		.byte	$c0
+		.byte	$0d,PT_BF4
+		.byte	$00
+		.byte	$80,PT_A4
+		.byte	$00
+		.byte	$0d,PT_G4
+		.byte	$00
+		.byte	$0d,PT_FS4
+		.byte	$0d,PT_G4
+		.byte	$00
+		.byte	$c0
+		.byte	$0d,PT_D4
+		.byte	$c0
+		.byte	$0d,PT_G4
+		.byte	$00
+		.byte	$0d,PT_D4
+		.byte	$c0
+		.byte	$0d,PT_EF4
+		.byte	$00
+		.byte	$0d,PT_C4
+		.byte	$c0
+		.byte	$0d,PT_A3
+		.byte	$0d,PT_D4
+		.byte	$00
+		.byte	$0d,PT_G3
 		.byte	$ff
 
 .data

@@ -221,7 +221,7 @@ wave_h:
 		.byte	$00,$00
 		.byte	PT_C3,PT_C2,$00,$00,$00,$00
 		.byte	$f8,$fb,$00,$f8,$fb,$00
-		.byte	$f8,$fb,$00,$f8,$fb,$00,w_2 -wave_l+10
+		.byte	$f8,$fb,$00,$f8,$fb,$00,w_f -wave_l+10
 
 pulse_l:
 p_2:		.byte	$8c,$20,$ff
