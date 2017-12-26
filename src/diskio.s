@@ -10,10 +10,14 @@
 .export dio_loadbitmap
 .export dio_endloadarchive
 .export get_crunched_byte
+.export dio_loadgamedat
+.export dio_savegamedat
 
 .import __DRVCODE_LOAD__
 .import __DRVCODE_RUN__
 .import __DRVCODE_SIZE__
+.import __PDATA_LOAD__
+.import __PDATA_SIZE__
 
 drvcode_chunk	= $20
 
@@ -252,6 +256,14 @@ dio_endloadarchive:
 		stx	stackptrstore
 dle_loop:	jsr	dio_getbyte
 		bcc	dle_loop
+
+.code
+
+dio_loadgamedat:
+		rts
+
+dio_savegamedat:
+		rts
 
 .segment "COREDATA"
 

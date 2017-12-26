@@ -18,10 +18,12 @@ endif
 
 8192_OBJS:=$(addprefix obj/,autoboot.o diskio.o decr.o zp.o charset.o irq.o \
 	title.o random.o numconv.o jsinput.o keyboard.o kbinput.o dirinput.o \
-	pitches.o instruments.o tunes.o sound.o screen.o board.o main.o)
+	pitches.o instruments.o tunes.o sound.o screen.o board.o \
+	state.o main.o)
 8192_BOOTBINS:=8192_boot.bin 8192_load.bin
 8192_MAINBINS:=8192_tcode.bin 8192_tbmp.bin 8192_code.bin
-8192_BINS:=$(8192_BOOTBINS) $(8192_MAINBINS)
+8192_STATEBIN:=8192_persist.bin
+8192_BINS:=$(8192_BOOTBINS) $(8192_MAINBINS) $(8192_STATEBIN)
 8192_EXOS:=$(8192_MAINBINS:.bin=.exo)
 8192_PRG:=8192.prg
 8192_ARCH:=8192.exa
@@ -29,10 +31,11 @@ endif
 
 all: $(8192_DISK)
 
-$(8192_DISK): $(8192_PRG) $(8192_ARCH)
+$(8192_DISK): $(8192_PRG) $(8192_ARCH) $(8192_STATEBIN)
 	$(MKD64) -o$@ -mcbmdos -d'8192 GAME' -i'ZPROD' -R1 -Da0 -0 \
 		-f$(8192_PRG) -n'8192' -S1 -w \
-		-f$(8192_ARCH) -n'8192MAIN' -TU -S0 -i15 -w
+		-f$(8192_ARCH) -n'8192MAIN' -TU -S0 -i15 -w \
+		-f$(8192_STATEBIN) -n'8192DATA' -TU -S0 -i15 -w
 
 $(8192_PRG): $(8192_BOOTBINS)
 	cat >$@ $^
