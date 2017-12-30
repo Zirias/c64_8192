@@ -21,6 +21,9 @@
 
 drvcode_chunk	= $20
 
+CMD_LOAD	= $00
+CMD_SAVE	= $01
+
 .zeropage
 
 temp1:		.res	1
@@ -190,7 +193,7 @@ dl_sendname:	lda	(nameptr),y
 		jsr	dio_sendbyte
 		dey
 		bpl	dl_sendname
-dl_namedone:	lda	#$1
+dl_namedone:	lda	#CMD_LOAD
 		jsr	dio_sendbyte
 dl_delay:	dex
 		bne	dl_delay
@@ -207,6 +210,14 @@ dl_loop:	jsr	get_decrunched_byte
 		inc	dataptr+1
 		bne	dl_loop
 dl_endload:	rts
+
+.segment "COREDATA"
+
+mwcmd:		.byte	drvcode_chunk, $ff, $ff, "w-m"
+mwcmd_size	= *-mwcmd
+
+mecmd:		.byte	>__DRVCODE_RUN__, <__DRVCODE_RUN__, "e-m"
+mecmd_size	= *-mecmd
 
 .segment "TCODE"
 
@@ -260,18 +271,35 @@ dle_loop:	jsr	dio_getbyte
 .code
 
 dio_loadgamedat:
-		rts
+		lda	#<__PDATA_LOAD__
+		sta	dataptr
+		lda	#>__PDATA_LOAD__
+		sta	dataptr+1
+		tsx
+		stx	stackptrstore
+		lda	namelength
+		jsr	dio_sendbyte
+		ldy	namelength
+		dey
+dlg_sendname:	lda	(nameptr),y
+		jsr	dio_sendbyte
+		dey
+		bpl	dlg_sendname
+		lda	#CMD_LOAD
+		jsr	dio_sendbyte
+dlg_delay:	dex
+		bne	dlg_delay
+		stx	temp2
+		iny
+dlg_loop:	jsr	dio_getbyte
+		sta	(dataptr),y
+		iny
+		bne	dlg_loop
+		inc	dataptr+1
+		bne	dlg_loop
 
 dio_savegamedat:
 		rts
-
-.segment "COREDATA"
-
-mwcmd:		.byte	drvcode_chunk, $ff, $ff, "w-m"
-mwcmd_size	= *-mwcmd
-
-mecmd:		.byte	>__DRVCODE_RUN__, <__DRVCODE_RUN__, "e-m"
-mecmd_size	= *-mecmd
 
 .segment "DRVCODE"
 
@@ -282,11 +310,14 @@ sctbf		= $09
 iddrv0		= $12
 id		= $16
 datbf		= $14
+drvcmd		= $1b
 buf		= $0400
 cmd		= $35
 namelen		= $37
 tmp1		= $2c
-;tmp2		= $2d
+
+CMD_READ	= $80
+CMD_WRITE	= $90
 
 drv_main:
 		cli
@@ -300,6 +331,8 @@ drv_nameloop:	jsr	drv_getbyte
 		sei
 		jsr	drv_getbyte
 		sta	cmd
+		lda	#CMD_READ
+		sta	drvcmd
 		lda	#$08
 		sta	VIA1_PRB
 
@@ -307,7 +340,7 @@ drv_nameloop:	jsr	drv_getbyte
 		ldy	#1
 drv_dirloop:	stx	trkbf
 		sty	sctbf
-		jsr	drv_readsect
+		jsr	drv_rwsect
 		bcc	drv_error
 		ldy	#$02
 drv_nextfile:	lda	buf,y
@@ -353,10 +386,27 @@ drv_nextsect:	lda	buf,y
 		beq	drv_end
 		lda	buf+1,y
 		sta	sctbf
-		jsr	drv_readsect
+		jsr	drv_rwsect
 		bcc	drv_error
 		ldy	#$ff
+		lda	cmd
+		beq	drv_load
+
 		lda	buf
+		bne	drv_recvblk
+		ldy	buf+1
+drv_recvblk:	tya
+drv_recvloop:	jsr	drv_getbyte
+		sta	buf,y
+		dey
+		bne	drv_recvloop
+		inc	drvcmd
+		jsr	drv_rwsect
+		dec	drvcmd
+		bcc	drv_error
+		bcs	drv_nextsect
+
+drv_load:	lda	buf
 		bne	drv_sendblk
 		ldy	buf+1
 drv_sendblk:	tya
@@ -366,10 +416,10 @@ drv_sendloop:	jsr	drv_sendbyte
 		bne	drv_sendloop
 		beq	drv_nextsect
 
-drv_readsect:	ldy	#RETRIES
+drv_rwsect:	ldy	#RETRIES
 drv_retry:	cli
 		jsr	drv_success
-		lda	#$80
+		lda	drvcmd
 		sta	acsbf
 drv_poll:	lda	acsbf
 		bmi	drv_poll
