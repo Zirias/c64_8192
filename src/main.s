@@ -16,17 +16,18 @@ validmove:	.res	1
 .segment "MAIN"
 
 		sei
+
 		jsr	rnd_init
 		jsr	board_init
 		jsr	screen_init
+
+		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
+		jsr	screen_draw
 		jsr	irq_init
 		cli
 
 		lda	#$0
 		jsr	snd_settune
-
-		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
-		jsr	screen_draw
 
 mainrestart:	jsr	board_addpiece
 		lda	#DRAWREQ_APPEAR

@@ -26,8 +26,12 @@ drawreq:	.res	1
 .code
 
 screen_init:
-		dec	$01
+		lda	#$0
+		sta	SPRITE_SHOW
+		lda	#$0b
+		sta	VIC_CTL1
 
+		dec	$01
 		lda	#>vic_screenram
 		sta	drawptr0+1		
 		lda	#$20

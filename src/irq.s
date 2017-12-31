@@ -249,9 +249,6 @@ irq_init:
 		lda	#vic_memctl_text
 		sta	VIC_MEMCTL
 
-		lda	#$0
-		sta	SPRITE_SHOW
-
 		; install ISR for VIC IRQ
 		lda	#<isr
 		sta	$fffe
@@ -261,8 +258,6 @@ irq_init:
 		; configure VIC IRQ
 		lda	#$f2
 		sta	VIC_RASTER
-		lda	#$1b
-		sta	VIC_CTL1
 		lda	#$08
 		sta	VIC_CTL2
 		lda	#$01
@@ -291,7 +286,9 @@ isr:
 		lda	#FRAMESKIP
 		sta	framephase
 		jsr	screen_refresh
-		beq	isr_bottom
+		lda	#$1b
+		sta	VIC_CTL1
+		bne	isr_bottom
 
 isr_upper:	lda	#$f2
 		sta	VIC_RASTER
