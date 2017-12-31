@@ -20,11 +20,11 @@ validmove:	.res	1
 		jsr	rnd_init
 		jsr	board_init
 		jsr	screen_init
+		jsr	irq_init
+		cli
 
 		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
 		jsr	screen_draw
-		jsr	irq_init
-		cli
 
 		lda	#$0
 		jsr	snd_settune
