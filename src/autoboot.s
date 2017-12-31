@@ -132,6 +132,10 @@ chainload:
 		ldy	#>__MAIN_LOAD__
 		jsr	dio_loadarchive
 		jsr	dio_endloadarchive
+		lda	#<datafilename
+		ldy	#>datafilename
+		jsr	dio_setname
+		jsr	dio_loadgamedat
 		jsr	title_loop
 		jmp	__MAIN_LOAD__
 
@@ -142,4 +146,5 @@ ld_done:	.byte	" done.", $0d
 ld_donelen	= *-ld_done
 
 filename:	.byte	"8192main", $00
+datafilename:	.byte	"8192data", $00
 

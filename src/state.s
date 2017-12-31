@@ -148,6 +148,6 @@ sl_srcboard	= *+1
 sl_boardloop:	lda	$ffff,x
 		sta	board,x
 		dex
-		bpl	ss_boardloop
+		bpl	sl_boardloop
 		rts
 

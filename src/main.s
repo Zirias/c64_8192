@@ -3,9 +3,11 @@
 .include "dirinput.inc"
 .include "screen.inc"
 .include "board.inc"
+.include "state.inc"
 .include "vicconfig.inc"
 .include "charconv.inc"
 .include "sound.inc"
+.include "jscodes.inc"
 
 .zeropage
 
@@ -26,7 +28,7 @@ validmove:	.res	1
 		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
 		jsr	screen_draw
 
-		jsr	board_addpiece
+mainrestart:	jsr	board_addpiece
 		lda	#DRAWREQ_APPEAR
 		jsr	screen_draw
 		lda	#DRAWREQ_BOARD
@@ -43,8 +45,35 @@ mainloop:	jsr	board_addpiece
 check_js:	jsr	dir_get
 		bcs	check_js
 		jsr	board_setdir
-		bcs	check_js
-		lda	#$0
+		bcc	domove
+
+		lda	#<defpin
+		ldy	#>defpin
+		jsr	state_setpin
+		ldx	#$0
+		lda	score
+		bne	savegame
+		lda	score+1
+		bne	savegame
+		lda	score+2
+		bne	savegame
+		lda	score+3
+		bne	savegame
+		jsr	state_load
+		ldx	#$f
+check_empty:	lda	board,x
+		beq	ce_next
+		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
+		jsr	screen_draw
+		beq	check_js
+ce_next:	dex
+		bpl	check_empty
+		bne	mainrestart
+
+savegame:	jsr	state_save
+		beq	check_js
+
+domove:		lda	#$0
 		sta	validmove
 steploop:	jsr	board_step
 		bcs	stepdone
@@ -76,3 +105,6 @@ end:		bne	end
 
 gameovertext:	plainchr "Game over!"
 gameoverlen	= *-gameovertext
+
+defpin:		plainchr "0000"
+

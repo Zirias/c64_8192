@@ -299,7 +299,33 @@ dlg_loop:	jsr	dio_getbyte
 		bne	dlg_loop
 
 dio_savegamedat:
+		lda	#<__PDATA_LOAD__
+		sta	dataptr
+		lda	#>__PDATA_LOAD__
+		sta	dataptr+1
+		lda	namelength
+		jsr	dio_sendbyte
+		ldy	namelength
+		dey
+dsg_sendname:	lda	(nameptr),y
+		jsr	dio_sendbyte
+		dey
+		bpl	dsg_sendname
+		lda	#CMD_SAVE
+		jsr	dio_sendbyte
+		iny
+dsg_loop:	cpy	#<__PDATA_SIZE__
+		bne	dsg_next
+		lda	dataptr+1
+		cmp	#>__PDATA_LOAD__ + >__PDATA_SIZE__
+		bne	dsg_next
 		rts
+dsg_next:	lda	(dataptr),y
+		jsr	dio_sendbyte
+		iny
+		bne	dsg_loop
+		inc	dataptr+1
+		bne	dsg_loop
 
 .segment "DRVCODE"
 
@@ -315,6 +341,7 @@ buf		= $0400
 cmd		= $35
 namelen		= $37
 tmp1		= $2c
+tmp2		= $46
 
 CMD_READ	= $80
 CMD_WRITE	= $90
@@ -368,8 +395,10 @@ drv_notfound:	lda	tmp1
 
 drv_error:	lda	#$01
 
-drv_end:	jsr	drv_sendbyte
-		lda	VIA1_PRB
+drv_end:	ldy	cmd
+		bne	drv_endsilent
+		jsr	drv_sendbyte
+drv_endsilent:	lda	VIA1_PRB
 		and	#$f7
 		sta	VIA1_PRB
 		lda	#$04
@@ -395,16 +424,24 @@ drv_nextsect:	lda	buf,y
 		lda	buf
 		bne	drv_recvblk
 		ldy	buf+1
-drv_recvblk:	tya
+drv_recvblk:	iny
+		sty	tmp2
+		ldy	#$2
 drv_recvloop:	jsr	drv_getbyte
 		sta	buf,y
-		dey
+		iny
+		cpy	tmp2
 		bne	drv_recvloop
-		inc	drvcmd
+		lda	#$90
+		sta	drvcmd
 		jsr	drv_rwsect
-		dec	drvcmd
+		lda	#$80
+		sta	drvcmd
 		bcc	drv_error
-		bcs	drv_nextsect
+		ldy	tmp2
+		beq	drv_nextsect
+		lda	#$0
+		beq	drv_endsilent
 
 drv_load:	lda	buf
 		bne	drv_sendblk
@@ -467,7 +504,8 @@ drv_waitclk2:	bit	VIA1_PRB
 		ldy	tmp1
 		rts
 
-drv_getbyte:	ldy	#$08
+drv_getbyte:	sty	tmp1
+		ldy	#$08
 drv_gbitloop:	lda	#$85
 		and	VIA1_PRB
 		bmi	drv_exit
@@ -487,6 +525,7 @@ drv_gbwait:	lda	VIA1_PRB
 		dey
 		bne	drv_gbitloop
 		lda	datbf
+		ldy	tmp1
 		rts
 
 drv_exit:	pla
