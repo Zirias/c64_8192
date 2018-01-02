@@ -26,7 +26,6 @@ int main(void)
 {
 #ifdef _WIN32
     setmode(fileno(stdout),O_BINARY);
-    setmode(fileno(stdin),O_BINARY);
 #endif
 
     size_t nextidx = 0;

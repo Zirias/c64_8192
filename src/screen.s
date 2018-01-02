@@ -126,24 +126,52 @@ row2_nocarry:	dec	boardrow
 		lda	#$e3
 		ldx	#$26
 boxloop1:	sta	vic_screenram+$348,x
-		eor	#$7
-		sta	vic_screenram+$3c0,x
-		eor	#$7
 		dex
 		bne	boxloop1
+		ldx	#$0d
+boxloop2:	sta	vic_screenram+$19,x
+		dex
+		bne	boxloop2
+		lda	#$e4
+		ldx	#$26
+boxloop3:	sta	vic_screenram+$3c0,x
+		dex
+		bne	boxloop3
+		ldx	#$0d
+boxloop4:	sta	vic_screenram+$311,x
+		dex
+		bne	boxloop4
 		lda	#$e5
-		sta	vic_screenram+$370
-		sta	vic_screenram+$398
+		ldx	#boxesrows-1
+boxloop5:	ldy	boxesleftl,x
+		sty	boxleftptr
+		ldy	boxeslefth,x
+		sty	boxleftptr+1
+boxleftptr	= *+1
+		sta	$ffff
+		dex
+		bpl	boxloop5
 		lda	#$e7
-		sta	vic_screenram+$397
-		sta	vic_screenram+$3bf
+		ldx	#boxesrows-1
+boxloop6:	ldy	boxesrightl,x
+		sty	boxrightptr
+		ldy	boxesrighth,x
+		sty	boxrightptr+1
+boxrightptr	= *+1
+		sta	$ffff
+		dex
+		bpl	boxloop6
 		ldy	#$5b
+		sty	vic_screenram+$19
 		sty	vic_screenram+$348
 		iny
+		sty	vic_screenram+$27
 		sty	vic_screenram+$36f
 		iny
+		sty	vic_screenram+$31f
 		sty	vic_screenram+$3e7
 		iny
+		sty	vic_screenram+$311
 		sty	vic_screenram+$3c0
 
 		ldx	#scorestrlen
@@ -390,6 +418,62 @@ colrowh2:	.byte	$d8, $d9, $d9, $da
 colrowh3_4:	.byte	$d8, $d9, $da, $da
 captrow:	.byte	>vic_screenram, (>vic_screenram)+1
 		.byte	(>vic_screenram)+1, (>vic_screenram)+2
+
+boxesleftl:	.byte	$70, $98
+mboxleftl:	.byte	$19, $41, $69, $91, $b9, $e1, $09, $31, $59, $81
+		.byte	$a9, $d1, $f9, $21, $49, $71, $99, $c1, $e9, $11
+boxesrows	= *-boxesleftl
+mboxrows	= *-mboxleftl
+
+boxesrightl:	.byte	$97, $bf
+mboxrightl:	.byte	$27, $4f, $77, $9f, $c7, $ef, $17, $3f, $67, $8f
+		.byte	$b7, $df, $07, $2f, $57, $7f, $a7, $cf, $f7, $1f
+
+boxeslefth:	.byte	>vic_screenram+3
+		.byte	>vic_screenram+3
+mboxlefth:	.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+3
+
+boxesrighth:	.byte	>vic_screenram+3
+		.byte	>vic_screenram+3
+mboxrighth:	.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+1
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+2
+		.byte	>vic_screenram+3
 
 scorestr:	revchr "Score:"
 scorestrlen	= *-scorestr
