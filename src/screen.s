@@ -193,6 +193,21 @@ lowerboxcol:	sta	$d800+$347,x
 		dex
 		bne	lowerboxcol
 
+		ldy	#mboxrows-1
+rightboxcol1:	lda	mboxleftl,y
+		sta	rboxcolptr
+		lda	mboxlefth,y
+		eor	#$08
+		sta	rboxcolptr+1
+		lda	#$0b
+		ldx	#$0e
+rboxcolptr	= *+1
+rightboxcol2:	sta	$ffff,x
+		dex
+		bpl	rightboxcol2
+		dey
+		bpl	rightboxcol1
+
 		rts
 		
 screen_draw:
