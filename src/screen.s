@@ -26,28 +26,42 @@ drawreq:	.res	1
 .code
 
 screen_init:
-		lda	#$0
-		sta	SPRITE_SHOW
 		lda	#$0b
 		sta	VIC_CTL1
 
-		dec	$01
 		lda	#>vic_screenram
-		sta	drawptr0+1		
-		lda	#$20
+		sta	drawptr0+1
+		lda	#$d8
+		sta	drawptr1+1
 		ldy	#$1
 		sty	drawreq
 		dey
-		sty	drawptr0
-		sty	BORDER_COLOR
-		sty	BG_COLOR_0
+		tya
+		sta	drawptr0
+		sta	drawptr1
+		sta	BORDER_COLOR
+		sta	BG_COLOR_0
+		sta	SPRITE_SHOW
 		ldx	#$3
+clearcolloop:	sta	(drawptr1),y
+		iny
+		bne	clearcolloop
+		inc	drawptr1+1
+		eor	#$a0
+		dec	$01
 clearloop:	sta	(drawptr0),y
-		dey
+		iny
 		bne	clearloop
 		inc	drawptr0+1
+		eor	#$a0
+		inc	$01
 		dex
-		bne	clearloop
+		bne	clearcolloop
+clearcolloop2:	sta	(drawptr1),y
+		iny
+		bne	clearcolloop2
+		dec	$01
+		eor	#$a0
 		ldy	#$e8
 clearloop2:	sta	vic_screenram + $2ff, y
 		dey
@@ -109,19 +123,14 @@ row2_done:	lda	drawptr0
 row2_nocarry:	dec	boardrow
 		bne	row0_repeat
 		
-		lda	#$a0
-		ldx	#$4e
-lowerboxloop1:	sta	vic_screenram+$370,x
-		dex
-		bne	lowerboxloop1
 		lda	#$e3
 		ldx	#$26
-lowerboxloop2:	sta	vic_screenram+$348,x
+boxloop1:	sta	vic_screenram+$348,x
 		eor	#$7
 		sta	vic_screenram+$3c0,x
 		eor	#$7
 		dex
-		bne	lowerboxloop2
+		bne	boxloop1
 		lda	#$e5
 		sta	vic_screenram+$370
 		sta	vic_screenram+$398

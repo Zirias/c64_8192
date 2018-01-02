@@ -34,8 +34,8 @@ all: $(8192_DISK)
 $(8192_DISK): $(8192_PRG) $(8192_ARCH) $(8192_STATEBIN)
 	$(MKD64) -o$@ -mcbmdos -d'8192 GAME' -i'ZPROD' -R1 -Da0 -0 \
 		-f$(8192_PRG) -n'8192' -S1 -w \
-		-f$(8192_ARCH) -n'8192MAIN' -TU -S0 -i15 -w \
-		-f$(8192_STATEBIN) -n'8192DATA' -TU -S0 -i15 -w
+		-f$(8192_STATEBIN) -n'8192DATA' -TU -S0 -i15 -w \
+		-f$(8192_ARCH) -n'8192MAIN' -TU -S0 -i15 -w
 
 $(8192_PRG): $(8192_BOOTBINS)
 	cat >$@ $^
