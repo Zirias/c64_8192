@@ -404,9 +404,10 @@ shro_sti:	sta	inst0,x
 		rts
 shro_hro:	lda	inst0,x
 		bmi	shro_done
-shro_sfx:	lda	#$0
+shro_sfx:	lda	#$04
 		sta	s_ad1,x
 		sta	s_sr1,x
+		lda	#$00
 		sta	wtpos0,x
 		sta	ptpos0,x
 		sta	ftpos0,x

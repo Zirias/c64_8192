@@ -251,7 +251,7 @@ flt6581_l:
 flt6581_h:
 		.byte	$52,$9c,$fa,$00
 		.byte	$22,$7c,$fa,$00
-		.byte	$a2,$89,$f3,$00
+		.byte	$a2,$94,$f4,$00
 
 .data
 
