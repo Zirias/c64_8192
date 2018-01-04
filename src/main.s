@@ -3,6 +3,7 @@
 .include "dirinput.inc"
 .include "screen.inc"
 .include "board.inc"
+.include "menu.inc"
 .include "state.inc"
 .include "vicconfig.inc"
 .include "charconv.inc"
@@ -23,7 +24,8 @@ validmove:	.res	1
 		jsr	irq_init
 		cli
 
-		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
+		jsr	menu_init
+		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE | DRAWREQ_PANEL
 		jsr	screen_draw
 
 		lda	#$0

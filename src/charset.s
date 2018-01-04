@@ -36,6 +36,12 @@ corners_loop:	lda	corners-1,x
 		bne	corners_loop
 
 		ldx	#$08
+copyright_loop:	lda	copyright-1,x
+		sta	vic_charset + ($7f << 3) -1,x
+		dex
+		bne	copyright_loop
+
+		ldx	#$08
 		lda	#$7f
 ledge_loop:	sta	vic_charset + ($e5 << 3) -1,x
 		dex
@@ -63,6 +69,8 @@ corners:	.byte	$00,$07,$1f,$3f,$3f,$7f,$7f,$7f
 		.byte	$00,$e0,$f8,$fc,$fc,$fe,$fe,$fe
 corners_len	= *-corners
 
+copyright:	.byte	$3c,$66,$5a,$52,$5a,$66,$3c,$00
+
 combnums:	.byte	$fc,$f9,$ff,$ff,$fc,$f9,$f8,$ff
 		.byte	$3f,$9f,$9f,$3f,$ff,$ff,$1f,$ff
 		.byte	$ff,$ff,$fe,$f9,$f8,$ff,$ff,$ff
@@ -77,5 +85,5 @@ combnums:	.byte	$fc,$f9,$ff,$ff,$fc,$f9,$f8,$ff
 		.byte	$3f,$9f,$ff,$3f,$9f,$9f,$3f,$ff
 		.byte	$f8,$f9,$f8,$ff,$ff,$f9,$fc,$ff
 		.byte	$1e,$fe,$3c,$9e,$9e,$9e,$38,$ff
-		.byte	$3c,$66,$5a,$52,$5a,$66,$3c,$00
+		.byte	$c3,$99,$a5,$ad,$a5,$99,$c3,$ff
 combnums_len	= *-combnums

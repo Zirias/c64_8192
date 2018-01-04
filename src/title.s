@@ -275,7 +275,7 @@ ts_scrollloop:	ldx	temp1
 
 scrolltext:
 		plainchr "8192 Game "
-		.byte	$ff
+		.byte	$7f
 		plainchr " 2018 by Zirias <felix@palmen-it.de> "
 		plainchr " -- press FIRE to start --       "
 		plainchr "Control with joystick in port #2 or <i>, <j>, <k>, "

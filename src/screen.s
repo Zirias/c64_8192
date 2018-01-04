@@ -7,6 +7,8 @@
 
 .export screen_init
 .export screen_draw
+.export screen_clearpanel
+.export screen_setpaneltext
 .export screen_refresh
 
 .zeropage
@@ -224,13 +226,60 @@ sd_noscore:	lda	nextreq
 		sta	drawreq
 sd_wait:	lda	drawreq
 		bne	sd_wait
-sc_nodraw:	rts
-		
+		rts
+
+screen_clearpanel:
+		ldx	#13*18
+		lda	#$a0
+scp_loop:	sta	menucontent-1,x
+		dex
+		bne	scp_loop
+		rts
+
+screen_setpaneltext:
+		sta	sspt_src
+		sty	sspt_src+1
+		lda	menuoffsets,x
+		tay
+		ldx	#12
+sspt_src	= *+1
+sspt_loop:	lda	$ffff,x
+		sta	menucontent,y
+		dey
+		dex
+		bpl	sspt_loop
+		rts
+
 screen_refresh:
 		lda	drawreq
 		and	#DRAWREQ_BOARD
-		beq	sr_score
+		beq	sr_panel
 		jsr	sr_doboard
+
+sr_panel:	lda	drawreq
+		and	#DRAWREQ_PANEL
+		beq	sr_score
+		lda	#mboxrows-3
+		sta	drawptr1
+		lda	#13*18 - 1
+		sta	drawptr1+1
+		dec	$01
+sr_panelloop1:	ldx	drawptr1
+		lda	mboxleftl+1,x
+		sta	drawptr0
+		lda	mboxlefth+1,x
+		sta	drawptr0+1
+		ldx	drawptr1+1
+		ldy	#13
+sr_panelloop2:	lda	menucontent,x
+		dex
+		sta	(drawptr0),y
+		dey
+		bne	sr_panelloop2
+		stx	drawptr1+1
+		dec	drawptr1
+		bpl	sr_panelloop1
+		inc	$01
 
 sr_score:	lda	drawreq
 		and	#DRAWREQ_SCORE
@@ -490,7 +539,15 @@ mboxrighth:	.byte	>vic_screenram
 		.byte	>vic_screenram+2
 		.byte	>vic_screenram+3
 
+menuoffsets:	.byte	$0c, $19, $26, $33, $40, $4d, $5a, $67, $74
+		.byte	$81, $8e, $9b, $a8, $b5, $c2, $cf, $dc, $e9
+
 scorestr:	revchr "Score:"
 scorestrlen	= *-scorestr
 highscorestr:	revchr "High score:"
 highscorestrlen	= *-highscorestr
+
+.bss
+
+menucontent:	.res	13 * 18
+
