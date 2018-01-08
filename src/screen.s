@@ -199,7 +199,7 @@ lowerboxcol:	sta	$d800+$347,x
 rightboxcol1:	lda	mboxleftl,y
 		sta	rboxcolptr
 		lda	mboxlefth,y
-		eor	#$08
+		eor	#$0c
 		sta	rboxcolptr+1
 		lda	#$0b
 		ldx	#$0e

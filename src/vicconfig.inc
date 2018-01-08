@@ -11,7 +11,7 @@ vic_charpage = $18
 vic_colpage = $14
 
 ; start page of screen memory in vic AS
-vic_screenpage = $10
+vic_screenpage = $14
 
 ; start page for spriteset in vic AS
 vic_sprite_base = $1a
