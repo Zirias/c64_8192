@@ -18,8 +18,8 @@ endif
 
 8192_OBJS:=$(addprefix obj/,autoboot.o diskio.o decr.o zp.o charset.o irq.o \
 	title.o random.o numconv.o jsinput.o keyboard.o kbinput.o dirinput.o \
-	pitches.o instruments.o tunes.o sound.o screen.o board.o menu.o \
-	state.o main.o)
+	sprites.o pitches.o instruments.o tunes.o sound.o screen.o board.o \
+	menu.o state.o main.o)
 8192_BOOTBINS:=8192_boot.bin 8192_load.bin
 8192_MAINBINS:=8192_tcode.bin 8192_tbmp.bin 8192_code.bin
 8192_STATEBIN:=8192_persist.bin

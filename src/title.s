@@ -3,6 +3,7 @@
 .include "vic.inc"
 .include "vicconfig.inc"
 .include "charconv.inc"
+.include "sprites.inc"
 
 .export title_init
 .export title_scroll
@@ -17,26 +18,6 @@ temp1:		.res	1
 temp2:		.res	1
 startcol:	.res	1
 colcounter:	.res	1
-
-
-.segment "TSPRITES"
-
-sprite_0:	.res	$40
-sprite_1:	.res	$40
-sprite_2:	.res	$40
-sprite_3:	.res	$40
-sprite_4:	.res	$40
-sprite_5:	.res	$40
-sprite_6:	.res	$40
-sprite_7:	.res	$40
-sprite_8:	.res	$40
-sprite_9:	.res	$40
-sprite_a:	.res	$40
-sprite_b:	.res	$40
-sprite_c:	.res	$40
-sprite_d:	.res	$40
-sprite_e:	.res	$40
-sprite_f:	.res	$40
 
 .segment "TCODE"
 
