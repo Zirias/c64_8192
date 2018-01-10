@@ -7,6 +7,7 @@
 .include "charset.inc"
 .include "title.inc"
 .include "keyboard.inc"
+.include "menu.inc"
 
 .export irq_early_init
 .export irq_init
@@ -286,6 +287,7 @@ isr:
 		lda	#FRAMESKIP
 		sta	framephase
 		jsr	screen_refresh
+		jsr	menu_irq
 		lda	#$1b
 		sta	VIC_CTL1
 		bne	isr_bottom

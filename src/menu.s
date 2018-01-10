@@ -4,13 +4,24 @@
 .include "state.inc"
 .include "sprites.inc"
 .include "vic.inc"
+.include "jscodes.inc"
 
 .export menu_init
 .export menu_invoke
+.export menu_irq
+
+.zeropage
+
+activerow:	.res	1
+colpos:		.res	1
 
 .code
 
 menu_init:
+		lda	#$80
+		sta	activerow
+		lda	#nummenucols-1
+		sta	colpos
 		lda	#$ff
 		ldx	#$17
 		dec	$01
@@ -32,10 +43,6 @@ bgspriteloop:	sta	sprite_0,x
 		sta	SPRITE_2_X
 		lda	#$04
 		sta	SPRITE_X_HB
-		lda	#$01
-		sta	SPRITE_0_COL
-		sta	SPRITE_1_COL
-		sta	SPRITE_2_COL
 		lda	#$07
 		sta	SPRITE_LAYER
 showidlestate:	jsr	screen_clearpanel
@@ -61,6 +68,9 @@ showidlestate:	jsr	screen_clearpanel
 		jmp	screen_setpaneltext
 
 menu_invoke:
+		lda	#2
+		sta	activerow
+
 		jsr	screen_clearpanel
 		lda	#<menu_m1
 		ldy	#>menu_m1
@@ -93,16 +103,33 @@ menu_invoke:
 		lda	#DRAWREQ_PANEL
 		jsr	screen_draw
 
-		lda	#$4a
-		sta	SPRITE_0_Y
-		sta	SPRITE_1_Y
-		sta	SPRITE_2_Y
 		lda	#$07
 		sta	SPRITE_SHOW
 		
 waitinput:	jsr	dir_get
 		bcs	waitinput
-		
+
+		cmp	#JS_FIRE
+		beq	leavemenu
+		cmp	#JS_UP
+		bne	checkdown
+		lda	activerow
+		sbc	#$2
+		beq	waitinput
+		sta	activerow
+		bne	waitinput
+
+checkdown:	cmp	#JS_DOWN
+		bne	waitinput
+		lda	activerow
+		adc	#$1
+		cmp	#15
+		bcs	waitinput
+		sta	activerow
+		bne	waitinput
+
+leavemenu:	lda	#$80
+		sta	activerow
 		lda	#$00
 		sta	SPRITE_SHOW
 		jsr	showidlestate
@@ -111,6 +138,27 @@ waitinput:	jsr	dir_get
 
 		lda	#$0
 		rts
+
+menu_irq:
+		lda	activerow
+		bmi	mi_done
+		asl	a
+		asl	a
+		asl	a
+		adc	#$3a
+		sta	SPRITE_0_Y
+		sta	SPRITE_1_Y
+		sta	SPRITE_2_Y
+		dec	colpos
+		bpl	colposok
+		lda	#nummenucols-1
+		sta	colpos
+colposok:	ldx	colpos
+		lda	menucols,x
+		sta	SPRITE_0_COL
+		sta	SPRITE_1_COL
+		sta	SPRITE_2_COL
+mi_done:	rts
 
 gamestate:	; TODO
 		;lda	#<defpin
@@ -160,3 +208,5 @@ menu_m5:	revchr  " Load / Save "
 menu_m6:	revchr  " Highscores  "
 menu_m7:	revchr	" Quit game   "
 
+menucols:	.byte	$0c,$0f,$0f,$01,$01,$01,$01,$01,$01,$01,$0f,$0f
+nummenucols	= *-menucols
