@@ -262,7 +262,7 @@ scrolltext:
 		plainchr "Control with joystick in port #2 or <i>, <j>, <k>, "
 		plainchr "<l> and <space>.       This only exists "
 		plainchr "because I wanted to create my own little game. "
-		plainchr "A game needs a title screen and a scroller, "
+		plainchr "A game needs a title screen and a scrolltext, "
 		plainchr "so here it is ;)       "
 		plainchr "Tools used: vim, GNU make, ca65/ld65, multipaint, "
 		plainchr "exomizer and mkd64.       "

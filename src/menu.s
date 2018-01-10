@@ -1,12 +1,44 @@
 .include "screen.inc"
 .include "charconv.inc"
+.include "dirinput.inc"
+.include "state.inc"
+.include "sprites.inc"
+.include "vic.inc"
 
 .export menu_init
+.export menu_invoke
 
 .code
 
 menu_init:
-		jsr	screen_clearpanel
+		lda	#$ff
+		ldx	#$17
+		dec	$01
+bgspriteloop:	sta	sprite_0,x
+		sta	sprite_1,x
+		sta	sprite_2,x
+		dex
+		bpl	bgspriteloop
+		inc	$01
+		lda	#$0
+		sta	SPRITE_DBL_Y
+		lda	#$fe
+		sta	SPRITE_DBL_X
+		lda	#$e8
+		sta	SPRITE_0_X
+		lda	#$f0
+		sta	SPRITE_1_X
+		lda	#$20
+		sta	SPRITE_2_X
+		lda	#$04
+		sta	SPRITE_X_HB
+		lda	#$01
+		sta	SPRITE_0_COL
+		sta	SPRITE_1_COL
+		sta	SPRITE_2_COL
+		lda	#$07
+		sta	SPRITE_LAYER
+showidlestate:	jsr	screen_clearpanel
 		lda	#<menu_t1
 		ldy	#>menu_t1
 		ldx	#2
@@ -28,6 +60,86 @@ menu_init:
 		ldx	#15
 		jmp	screen_setpaneltext
 
+menu_invoke:
+		jsr	screen_clearpanel
+		lda	#<menu_m1
+		ldy	#>menu_m1
+		ldx	#2
+		jsr	screen_setpaneltext
+		lda	#<menu_m2
+		ldy	#>menu_m2
+		ldx	#4
+		jsr	screen_setpaneltext
+		lda	#<menu_m3a
+		ldy	#>menu_m3a
+		ldx	#6
+		jsr	screen_setpaneltext
+		lda	#<menu_m4a
+		ldy	#>menu_m4a
+		ldx	#8
+		jsr	screen_setpaneltext
+		lda	#<menu_m5
+		ldy	#>menu_m5
+		ldx	#10
+		jsr	screen_setpaneltext
+		lda	#<menu_m6
+		ldy	#>menu_m6
+		ldx	#12
+		jsr	screen_setpaneltext
+		lda	#<menu_m7
+		ldy	#>menu_m7
+		ldx	#14
+		jsr	screen_setpaneltext
+		lda	#DRAWREQ_PANEL
+		jsr	screen_draw
+
+		lda	#$4a
+		sta	SPRITE_0_Y
+		sta	SPRITE_1_Y
+		sta	SPRITE_2_Y
+		lda	#$07
+		sta	SPRITE_SHOW
+		
+waitinput:	jsr	dir_get
+		bcs	waitinput
+		
+		lda	#$00
+		sta	SPRITE_SHOW
+		jsr	showidlestate
+		lda	#DRAWREQ_PANEL
+		jsr	screen_draw
+
+		lda	#$0
+		rts
+
+gamestate:	; TODO
+		;lda	#<defpin
+		;ldy	#>defpin
+		jsr	state_setpin
+		ldx	#$0
+		;lda	score
+		;bne	savegame
+		;lda	score+1
+		;bne	savegame
+		;lda	score+2
+		;bne	savegame
+		;lda	score+3
+		;bne	savegame
+		;jsr	state_load
+		;ldx	#$f
+check_empty:	;lda	board,x
+		beq	ce_next
+		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE
+		jsr	screen_draw
+		;beq	check_js
+ce_next:	dex
+		bpl	check_empty
+		;bne	mainrestart
+
+savegame:	jsr	state_save
+		;beq	check_js
+
+
 .data
 
 menu_t1:	revchr	" 8192 "
@@ -37,4 +149,14 @@ menu_t2:	revchr	"  by Zirias  "
 menu_t3:	revchr	" press  FIRE "
 menu_t4:	revchr	" to activate "
 menu_t5:	revchr	"  the  menu  "
+
+menu_m1:	revchr	" Continue    "
+menu_m2:	revchr  " Restart     "
+menu_m3a:	revchr	" Music off   "
+menu_m3b:	revchr	" Music on    "
+menu_m4a:	revchr  " SFX off     "
+menu_m4b:	revchr	" SFX on      "
+menu_m5:	revchr  " Load / Save "
+menu_m6:	revchr  " Highscores  "
+menu_m7:	revchr	" Quit game   "
 
