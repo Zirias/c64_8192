@@ -69,20 +69,13 @@ stepdone:	lda	validmove
 		jsr	snd_fx
 		bpl	check_js
 
-gameover:	sei
-		dec	$01
-		ldx	#gameoverlen
-gotextloop:	lda	gameovertext-1,x
-		sta	vic_screenram+$93,x
-		dex
-		bne	gotextloop
-		inc	$01
-		cli
-end:		bne	end
-
-
-.data
-
-gameovertext:	plainchr "Game over!"
-gameoverlen	= *-gameovertext
+gameover:	jsr	menu_gameover
+go_loop:	jsr	dir_get
+		bcs	go_loop
+		cmp	#JS_FIRE
+		bne	go_loop
+		jsr	menu_invoke
+		bcc	gameover
+		jsr	board_init
+		bne	mainrestart
 

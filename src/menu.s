@@ -8,6 +8,7 @@
 
 .export menu_init
 .export menu_invoke
+.export menu_gameover
 .export menu_irq
 
 .zeropage
@@ -48,15 +49,15 @@ bgspriteloop:	sta	sprite_0,x
 showidlestate:	jsr	screen_clearpanel
 		lda	#<menu_t1
 		ldy	#>menu_t1
-		ldx	#2
+		ldx	#3
 		jsr	screen_setpaneltext
 		lda	#<menu_t2
 		ldy	#>menu_t2
-		ldx	#4
+		ldx	#5
 		jsr	screen_setpaneltext
 		lda	#<menu_t3
 		ldy	#>menu_t3
-		ldx	#11
+		ldx	#6
 		jsr	screen_setpaneltext
 		lda	#<menu_t4
 		ldy	#>menu_t4
@@ -64,6 +65,10 @@ showidlestate:	jsr	screen_clearpanel
 		jsr	screen_setpaneltext
 		lda	#<menu_t5
 		ldy	#>menu_t5
+		ldx	#14
+		jsr	screen_setpaneltext
+		lda	#<menu_t6
+		ldy	#>menu_t6
 		ldx	#15
 		jmp	screen_setpaneltext
 
@@ -147,6 +152,17 @@ hidemenu:	lda	#$80
 		lda	#DRAWREQ_PANEL
 		jmp	screen_draw
 
+menu_gameover:
+		lda	#<menu_govr
+		ldy	#>menu_govr
+		ldx	#10
+		stx	activerow
+		jsr	screen_setpaneltext
+		lda	#$07
+		sta	SPRITE_SHOW
+		lda	#DRAWREQ_PANEL
+		jmp	screen_draw
+
 menu_irq:
 		lda	activerow
 		bmi	mi_done
@@ -198,13 +214,13 @@ savegame:	jsr	state_save
 
 .data
 
-menu_t1:	revchr	" 8192 "
-		.byte	$ff
-		revchr	" 2018 "
-menu_t2:	revchr	"  by Zirias  "
-menu_t3:	revchr	" press  FIRE "
-menu_t4:	revchr	" to activate "
-menu_t5:	revchr	"  the  menu  "
+menu_t1:	revchr	" 8192  v0.3a "
+menu_t2:	.byte	$a0,$a0,$a0,$ff
+		revchr	    " 2018    "
+menu_t3:	revchr	"  by Zirias  "
+menu_t4:	revchr	" press  FIRE "
+menu_t5:	revchr	" to activate "
+menu_t6:	revchr	"  the  menu  "
 
 menu_m1:	revchr	" Continue    "
 menu_m2:	revchr  " Restart     "
@@ -215,6 +231,8 @@ menu_m4b:	revchr	" SFX on      "
 menu_m5:	revchr  " Load / Save "
 menu_m6:	revchr  " Highscores  "
 menu_m7:	revchr	" Quit game   "
+
+menu_govr:	revchr	"  GAME OVER  "
 
 menucols:	.byte	$0c,$0b,$0c,$0f,$0f,$01,$01,$01,$01,$01,$01,$0f,$0f
 nummenucols	= *-menucols
