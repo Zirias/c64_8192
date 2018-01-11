@@ -3,9 +3,12 @@ C64AS?=ca65
 C64LD?=ld65
 MKD64?=mkd64
 EXO?=exomizer
+VICE?=x64sc
 
+LABELS?=8192.lbl
+VICEFLAGS?=-jamaction 2
 C64ASFLAGS?=-t $(C64SYS) -g
-C64LDFLAGS?=-Ln 8192.lbl -m 8192.map -Csrc/8192.cfg
+C64LDFLAGS?=-Ln $(LABELS) -m 8192.map -Csrc/8192.cfg
 
 CC?=gcc
 CFLAGS?=-std=c11 -Wall -Wextra -pedantic -O3 -g0
@@ -30,6 +33,10 @@ endif
 8192_DISK:=8192.d64
 
 all: $(8192_DISK)
+
+run: $(8192_DISK)
+	$(VICE) $(VICEFLAGS) -moncommands $(LABELS) -8 $(8192_DISK) \
+		-keybuf "lO\"*\",8,1\\n"
 
 $(8192_DISK): $(8192_PRG) $(8192_ARCH) $(8192_STATEBIN)
 	$(MKD64) -o$@ -mcbmdos -d'8192 GAME' -i'ZPROD' -R1 -Da0 -0 \
@@ -67,6 +74,6 @@ clean:
 distclean: clean
 	rm -f $(8192_DISK) $(MPMC2ZBB) *.prg *.exa *.exo
 
-.PHONY: all clean distclean
+.PHONY: all run clean distclean
 .PRECIOUS: $(8192_OBJS) $(8192_BINS)
 
