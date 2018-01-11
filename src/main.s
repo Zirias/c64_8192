@@ -24,13 +24,13 @@ validmove:	.res	1
 		cli
 
 		jsr	menu_init
-		lda	#DRAWREQ_BOARD | DRAWREQ_SCORE | DRAWREQ_PANEL
-		jsr	screen_draw
-
 		lda	#$0
 		jsr	snd_settune
 
-mainrestart:	jsr	board_addpiece
+mainrestart:	lda	#DRAWREQ_BOARD | DRAWREQ_SCORE | DRAWREQ_PANEL
+		jsr	screen_draw
+
+		jsr	board_addpiece
 		lda	#DRAWREQ_APPEAR
 		jsr	screen_draw
 		lda	#DRAWREQ_BOARD
@@ -49,7 +49,9 @@ check_js:	jsr	dir_get
 		jsr	board_setdir
 		bcc	domove
 		jsr	menu_invoke
-		beq	check_js
+		bcc	check_js
+		jsr	board_init
+		bne	mainrestart
 
 domove:		lda	#$0
 		sta	validmove

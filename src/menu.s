@@ -110,8 +110,19 @@ waitinput:	jsr	dir_get
 		bcs	waitinput
 
 		cmp	#JS_FIRE
-		beq	leavemenu
-		cmp	#JS_UP
+		bne	checkup
+
+		lda	activerow
+		cmp	#$4
+		bne	m_norestart
+		jsr	hidemenu
+		sec
+		rts
+m_norestart:	jsr	hidemenu
+		clc
+		rts
+
+checkup:	cmp	#JS_UP
 		bne	checkdown
 		lda	activerow
 		sbc	#$2
@@ -128,16 +139,13 @@ checkdown:	cmp	#JS_DOWN
 		sta	activerow
 		bne	waitinput
 
-leavemenu:	lda	#$80
+hidemenu:	lda	#$80
 		sta	activerow
 		lda	#$00
 		sta	SPRITE_SHOW
 		jsr	showidlestate
 		lda	#DRAWREQ_PANEL
-		jsr	screen_draw
-
-		lda	#$0
-		rts
+		jmp	screen_draw
 
 menu_irq:
 		lda	activerow
@@ -208,5 +216,5 @@ menu_m5:	revchr  " Load / Save "
 menu_m6:	revchr  " Highscores  "
 menu_m7:	revchr	" Quit game   "
 
-menucols:	.byte	$0c,$0f,$0f,$01,$01,$01,$01,$01,$01,$01,$0f,$0f
+menucols:	.byte	$0c,$0b,$0c,$0f,$0f,$01,$01,$01,$01,$01,$01,$0f,$0f
 nummenucols	= *-menucols
