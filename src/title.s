@@ -73,6 +73,7 @@ ti_spclr:	sta	$ff00,x
 		lda	#$7f
 		sta	SPRITE_SHOW
 		lda	#$0
+		sta	SPRITE_LAYER
 		sta	charbit
 		sta	startcol
 		sta	colcounter

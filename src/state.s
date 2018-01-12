@@ -5,6 +5,8 @@
 .export state_auth
 .export state_save
 .export state_load
+.export state_qsave
+.export state_qload
 
 PINKEY_L	= $69
 PINKEY_H	= $cb
@@ -45,6 +47,10 @@ board8:		.byte	$00,$00,$00,$00,$00,$00,$00,$00
 		.byte	$00,$00,$00,$00,$00,$00,$00,$00
 board9:		.byte	$00,$00,$00,$00,$00,$00,$00,$00
 		.byte	$00,$00,$00,$00,$00,$00,$00,$00
+
+qboard:		.byte	$00,$00,$00,$00,$00,$00,$00,$00
+		.byte	$00,$00,$00,$00,$00,$00,$00,$00
+qscore:		.byte	$00,$00,$00,$00
 
 .bss
 
@@ -149,5 +155,31 @@ sl_boardloop:	lda	$ffff,x
 		sta	board,x
 		dex
 		bpl	sl_boardloop
+		rts
+
+state_qsave:
+		ldx	#$3
+sqs_score:	lda	score,x
+		sta	qscore,x
+		dex
+		bpl	sqs_score
+		ldx	#$f
+sqs_board:	lda	board,x
+		sta	qboard,x
+		dex
+		bpl	sqs_board
+		jmp	dio_savegamedat
+
+state_qload:
+		ldx	#$3
+sql_score:	lda	qscore,x
+		sta	score,x
+		dex
+		bpl	sql_score
+		ldx	#$f
+sql_board:	lda	qboard,x
+		sta	board,x
+		dex
+		bpl	sql_board
 		rts
 

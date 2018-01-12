@@ -22,6 +22,8 @@ OP_BNE		= $D0
 .zeropage
 
 memctl_save:	.res	1
+border_save:	.res	1
+bg_save:	.res	1
 accu_save:	.res	1
 x_save:		.res	1
 y_save:		.res	1
@@ -32,9 +34,39 @@ curtaindelay:	.res	1
 curtainpos	= framephase
 curtaintoggle	= y_save
 
+.bss
+
+colram_save:	.res	$400
+
 .segment "CORE"
 
 irq_early_init:
+		lda	VIC_MEMCTL
+		sta	memctl_save
+		lda	BORDER_COLOR
+		sta	border_save
+		lda	BG_COLOR_0
+		sta	bg_save
+
+		ldy	#$4
+		lda	#<colram_save
+		sta	iei_crsptr
+		lda	#>colram_save
+		sta	iei_crsptr+1
+		lda	#$d8
+		sta	iei_crptr+1
+		ldx	#$0
+iei_crptr	= *+1
+iei_crsave:	lda	$ff00,x
+iei_crsptr	= *+1
+		sta	$ffff,x
+		inx
+		bne	iei_crsave
+		inc	iei_crsptr+1
+		inc	iei_crptr+1
+		dey
+		bne	iei_crsave
+
 		; disable CIA1 IRQ
 		lda	#$7f
 		sta	CIA1_ICR
@@ -268,6 +300,47 @@ irq_init:
 		rts
 
 irq_done:
+		lda	#$0
+		sta	VIC_IRM
+		sta	VIC_IRR
+		sta	SPRITE_SHOW
+		sta	SPRITE_LAYER
+		sta	SPRITE_DBL_X
+		sta	SPRITE_DBL_Y
+		lda	#$37
+		sta	$01
+		lda	CIA2_ICR
+		lda	memctl_save
+		sta	VIC_MEMCTL
+		lda	border_save
+		sta	BORDER_COLOR
+		lda	bg_save
+		sta	BG_COLOR_0
+		lda	CIA2_PRA
+		ora	#$3
+		sta	CIA2_PRA
+		lda	#$83
+		sta	CIA1_ICR
+
+		ldy	#$4
+		lda	#<colram_save
+		sta	id_crsptr
+		lda	#>colram_save
+		sta	id_crsptr+1
+		lda	#$d8
+		sta	id_crptr+1
+		ldx	#$0
+id_crsptr	= *+1
+id_crrest:	lda	$ffff,x
+id_crptr	= *+1
+		sta	$ff00,x
+		inx
+		bne	id_crrest
+		inc	id_crsptr+1
+		inc	id_crptr+1
+		dey
+		bne	id_crrest
+
 		rts
 
 isr:

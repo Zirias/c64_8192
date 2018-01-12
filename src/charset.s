@@ -1,7 +1,6 @@
 .include "vicconfig.inc"
 
 .export charset_init
-.export charset_done
 
 .zeropage
 
@@ -60,9 +59,6 @@ combnums_loop:	lda	combnums-1,x
 
 		lda	#$35
 		sta	$1
-		rts
-
-charset_done:
 		rts
 
 corners:	.byte	$00,$07,$1f,$3f,$3f,$7f,$7f,$7f

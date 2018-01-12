@@ -118,12 +118,20 @@ waitinput:	jsr	dir_get
 		bne	checkup
 
 		lda	activerow
-		cmp	#$4
+		cmp	#4
 		bne	m_norestart
 		jsr	hidemenu
 		sec
+		lda	#$0
 		rts
-m_norestart:	jsr	hidemenu
+
+m_norestart:	cmp	#14
+		bne	m_noquit
+		sec
+		lda	#$1
+		rts
+
+m_noquit:	jsr	hidemenu
 		clc
 		rts
 

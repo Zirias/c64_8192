@@ -16,4 +16,7 @@ KRNL_GETIN      = $ffe4
 KRNL_LOAD       = $ffd5
 KRNL_SAVE       = $ffd8
 
+KRNL_GETKB      = $f142
+KRNL_RESETIO    = $fda3
+
 ; vim: ft=asm:et:si:ts=8:sts=8:sw=8

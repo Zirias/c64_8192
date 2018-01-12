@@ -8,6 +8,9 @@
 .include "charconv.inc"
 .include "sound.inc"
 .include "jscodes.inc"
+.include "state.inc"
+.include "zp.inc"
+.include "kernal.inc"
 
 .zeropage
 
@@ -18,7 +21,7 @@ validmove:	.res	1
 		sei
 
 		jsr	rnd_init
-		jsr	board_init
+		jsr	state_qload
 		jsr	screen_init
 		jsr	irq_init
 		cli
@@ -29,6 +32,12 @@ validmove:	.res	1
 
 mainrestart:	lda	#DRAWREQ_BOARD | DRAWREQ_SCORE | DRAWREQ_PANEL
 		jsr	screen_draw
+
+		ldx	#$f
+checkboard:	lda	board,x
+		bne	check_js
+		dex
+		bpl	checkboard
 
 		jsr	board_addpiece
 		lda	#DRAWREQ_APPEAR
@@ -50,6 +59,8 @@ check_js:	jsr	dir_get
 		bcc	domove
 		jsr	menu_invoke
 		bcc	check_js
+mcommand:	lsr	a
+		bcs	quit
 		jsr	board_init
 		bne	mainrestart
 
@@ -76,6 +87,14 @@ go_loop:	jsr	dir_get
 		bne	go_loop
 		jsr	menu_invoke
 		bcc	gameover
-		jsr	board_init
-		bne	mainrestart
+		bcs	mcommand
+
+quit:
+		sei
+		jsr	irq_done
+		jsr	zp_done
+		cli
+clearkb:	jsr	KRNL_GETKB
+		bne	clearkb
+		jmp	KRNL_RESETIO
 
