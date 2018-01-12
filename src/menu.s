@@ -126,12 +126,9 @@ waitinput:	jsr	dir_get
 		rts
 
 m_norestart:	cmp	#14
-		bne	m_noquit
-		sec
-		lda	#$1
-		rts
+		beq	m_quit
 
-m_noquit:	jsr	hidemenu
+		jsr	hidemenu
 		clc
 		rts
 
@@ -159,6 +156,69 @@ hidemenu:	lda	#$80
 		jsr	showidlestate
 		lda	#DRAWREQ_PANEL
 		jmp	screen_draw
+
+m_quit:
+		lda	#7
+		sta	activerow
+
+		jsr	screen_clearpanel
+		lda	#<menu_m7
+		ldy	#>menu_m7
+		ldx	#2
+		jsr	screen_setpaneltext
+		lda	#<menu_q1
+		ldy	#>menu_q1
+		ldx	#5
+		jsr	screen_setpaneltext
+		lda	#<menu_yes
+		ldy	#>menu_yes
+		ldx	#7
+		jsr	screen_setpaneltext
+		lda	#<menu_no
+		ldy	#>menu_no
+		ldx	#9
+		jsr	screen_setpaneltext
+		lda	#<menu_cancel
+		ldy	#>menu_cancel
+		ldx	#11
+		jsr	screen_setpaneltext
+		lda	#DRAWREQ_PANEL
+		jsr	screen_draw
+
+mq_waitinput:	jsr	dir_get
+		bcs	mq_waitinput
+
+		cmp	#JS_FIRE
+		bne	mq_checkup
+
+		lda	activerow
+		cmp	#11
+		bne	mq_checkqsave
+		jmp	menu_invoke
+mq_checkqsave:	cmp	#9
+		beq	mq_noqsave
+		jsr	state_qsave
+mq_noqsave:	sec
+		lda	#$1
+		rts
+
+mq_checkup:	cmp	#JS_UP
+		bne	mq_checkdown
+		lda	activerow
+		sbc	#$2
+		cmp	#$7
+		bcc	mq_waitinput
+		sta	activerow
+		bne	mq_waitinput
+
+mq_checkdown:	cmp	#JS_DOWN
+		bne	mq_waitinput
+		lda	activerow
+		adc	#$1
+		cmp	#12
+		bcs	mq_waitinput
+		sta	activerow
+		bne	mq_waitinput
 
 menu_gameover:
 		lda	#<menu_govr
@@ -239,6 +299,12 @@ menu_m4b:	revchr	" SFX on      "
 menu_m5:	revchr  " Load / Save "
 menu_m6:	revchr  " Highscores  "
 menu_m7:	revchr	" Quit game   "
+
+menu_q1:	revchr	" Quick save: "
+
+menu_yes:	revchr	"   Yes       "
+menu_no:	revchr  "   No        "
+menu_cancel:	revchr  "   Cancel    "
 
 menu_govr:	revchr	"  GAME OVER  "
 
