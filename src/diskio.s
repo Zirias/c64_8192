@@ -398,13 +398,13 @@ drv_error:	lda	#$01
 drv_end:	ldy	cmd
 		bne	drv_endsilent
 		jsr	drv_sendbyte
-drv_endsilent:	lda	VIA1_PRB
+		lda	VIA1_PRB
 		and	#$f7
 		sta	VIA1_PRB
 		lda	#$04
 drv_endwait:	bit	VIA1_PRB
 		bne	drv_endwait
-		ldy	#$00
+drv_endsilent:	ldy	#$00
 		sty	VIA1_PRB
 		jmp	drv_main
 
