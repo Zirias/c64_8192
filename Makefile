@@ -9,6 +9,7 @@ LABELS?=8192.lbl
 VICEFLAGS?=-jamaction 2
 C64ASFLAGS?=-t $(C64SYS) -g
 C64LDFLAGS?=-Ln $(LABELS) -m 8192.map -Csrc/8192.cfg
+C64LDSIDFLAGS?=-Csrc/8192sid.cfg
 
 CC?=gcc
 CFLAGS?=-std=c11 -Wall -Wextra -pedantic -O3 -g0
@@ -23,6 +24,8 @@ endif
 	title.o random.o numconv.o jsinput.o keyboard.o kbinput.o dirinput.o \
 	sprites.o pitches.o instruments.o tunes.o sound.o screen.o board.o \
 	menu.o state.o main.o)
+8192_SIDOBJS:=$(addprefix obj/,sidhdr.o pitches.o instruments.o tunes.o sound.o)
+
 8192_BOOTBINS:=8192_boot.bin 8192_load.bin
 8192_MAINBINS:=8192_tcode.bin 8192_tbmp.bin 8192_code.bin
 8192_STATEBIN:=8192_persist.bin
@@ -31,12 +34,17 @@ endif
 8192_PRG:=8192.prg
 8192_ARCH:=8192.exa
 8192_DISK:=8192.d64
+8192_SID:=8192.sid
 
 all: $(8192_DISK)
 
 run: $(8192_DISK)
 	$(VICE) $(VICEFLAGS) -moncommands $(LABELS) -8 $(8192_DISK) \
 		-keybuf "lO\"*\",8,1\\n"
+sid: $(8192_SID)
+
+$(8192_SID): $(8192_SIDOBJS)
+	$(C64LD) -o$@ $(C64LDSIDFLAGS) $^
 
 $(8192_DISK): $(8192_PRG) $(8192_ARCH) $(8192_STATEBIN)
 	$(MKD64) -o$@ -mcbmdos -d'8192 GAME' -i'ZPROD' -R1 -Da0 -0 \
@@ -62,6 +70,9 @@ $(8192_ARCH): $(8192_EXOS)
 obj:
 	mkdir obj
 
+obj/sidhdr.o: src/sidhdr.s src/8192sid.cfg Makefile | obj
+	ca65 -t none -o$@ $<
+
 obj/%.o: src/%.s src/8192.cfg Makefile | obj
 	$(C64AS) $(C64ASFLAGS) -o$@ $<
 
@@ -72,8 +83,8 @@ clean:
 	rm -fr obj *.lbl *.map *.bin
 
 distclean: clean
-	rm -f $(8192_DISK) $(MPMC2ZBB) *.prg *.exa *.exo
+	rm -f $(8192_DISK) $(MPMC2ZBB) *.prg *.sid *.exa *.exo
 
-.PHONY: all run clean distclean
+.PHONY: all run sid clean distclean
 .PRECIOUS: $(8192_OBJS) $(8192_BINS)
 

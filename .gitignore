@@ -10,4 +10,5 @@ tools/mpmc2zbb
 *.exa
 *.d64
 *.exe
+*.sid
 
