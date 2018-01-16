@@ -94,7 +94,7 @@ quit:
 		jsr	irq_done
 		jsr	zp_done
 		cli
-clearkb:	jsr	KRNL_GETKB
+clearkb:	jsr	KRNL_GETCHR
 		bne	clearkb
 		jmp	KRNL_RESETIO
 
